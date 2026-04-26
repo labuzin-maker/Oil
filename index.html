@@ -254,7 +254,7 @@
     // ═════════ НАСТРОЙКИ ═════════
     const TELEGRAM_BOT_TOKEN = '8614689828:AAEegwJ7Hst_CWxeQCDaPKo1MG0HPT5JvmQ';
     const TELEGRAM_CHAT_ID = '5979121526';
-    const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzxdH56Wy5EJahyc9yTTyzOaUxeiUKj4KObQRd6K-fplXahI5fkBbASZLY319paDji67A/exec';
+    const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbyLUTP5Di-6VESfNs6ep6-vEpWzVWdyQC6jAB0_jv3GsRJjYtI2FC2p0jE-rvevEmfnsA/exec';
     // ═════════════════════════════
 
     const STORAGE_KEY = 'oil_diary_v8';
@@ -335,7 +335,13 @@
 
     async function sendToGoogleSheet(payload){
       if(!GOOGLE_SHEET_URL||GOOGLE_SHEET_URL.includes('ВСТАВЬТЕ'))return;
-      try{await fetch(GOOGLE_SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});}catch(e){}
+      try{
+        await fetch(GOOGLE_SHEET_URL,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload)
+        });
+      }catch(e){}
     }
 
     function showSuggestions(input,dropdown,type){
