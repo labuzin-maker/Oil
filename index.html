@@ -119,13 +119,13 @@
       </div>
 
       <div class="input-group">
-        <label>📅 Интервал замены масла по пробегу (км)</label>
+        <label>📅 Интервал замены по пробегу (км)</label>
         <input type="number" id="intervalMileageInput" placeholder="10000" value="10000" inputmode="numeric">
         <div style="font-size:11px; color:#8e8e93; margin-top:3px;">Обычно 7 000 – 15 000 км</div>
       </div>
 
       <div class="input-group">
-        <label>📅 Интервал замены масла по времени (месяцев)</label>
+        <label>📅 Интервал замены по времени (месяцев)</label>
         <input type="number" id="intervalMonthsInput" placeholder="12" value="12" inputmode="numeric">
         <div style="font-size:11px; color:#8e8e93; margin-top:3px;">Обычно 6 – 12 месяцев</div>
       </div>
@@ -142,11 +142,9 @@
 
       <div class="card">
         <div class="card-title">📊 Состояние масла</div>
-        <!-- Прогресс-бар по пробегу -->
         <div style="font-size:11px; color:#8e8e93; margin-bottom:2px;">По пробегу</div>
         <div class="progress-container"><div class="progress-bar" id="progressBarMileage"></div></div>
         <div class="stats"><span id="mileageDetail"></span></div>
-        <!-- Прогресс-бар по времени -->
         <div style="font-size:11px; color:#8e8e93; margin-top:10px; margin-bottom:2px;">По времени</div>
         <div class="progress-container"><div class="progress-bar" id="progressBarDate"></div></div>
         <div class="stats"><span id="dateDetail"></span></div>
@@ -213,15 +211,15 @@
       <div style="border-top:1px solid #e5e5ea; margin:18px 0 14px; padding-top:4px; font-weight:600; font-size:13px; color:#1c1c1e;">🔧 Фильтры (что заменили)</div>
       <div class="input-group">
         <label>Масляный фильтр</label>
-        <input type="text" id="filterOil" placeholder="Например: MANN W 610/6">
+        <input type="text" id="filterOil" placeholder="MANN W 610/6">
       </div>
       <div class="input-group">
         <label>Воздушный фильтр</label>
-        <input type="text" id="filterAir" placeholder="Например: BOSCH F 026 400">
+        <input type="text" id="filterAir" placeholder="BOSCH F 026 400">
       </div>
       <div class="input-group">
         <label>Салонный фильтр</label>
-        <input type="text" id="filterCabin" placeholder="Например: MAHLE LAK 230">
+        <input type="text" id="filterCabin" placeholder="MAHLE LAK 230">
       </div>
       <button class="btn" id="saveChangeBtn">💾 Сохранить замену</button>
     </div>
@@ -284,7 +282,11 @@
 
     function isDiesel(name) { return /diesel|turbodiesel|hd-shield|farmtec/i.test(name||''); }
     function getOilType(name) { return isDiesel(name) ? 'Дизельное' : 'Бензиновое'; }
-    function getOilFromSelect(sel, inp) { return sel.value === 'custom' ? (inp.value.trim() || 'Другое масло') : sel.value; }
+    function getOilFromSelect(sel, inp) {
+      const val = sel.value;
+      if (!val || val === '') return null; // ← ИСПРАВЛЕНИЕ: явно возвращаем null если не выбрано
+      return val === 'custom' ? (inp.value.trim() || null) : val;
+    }
 
     function estimateMileage(lastMileage, lastTimestamp) {
       const hours = (Date.now() - lastTimestamp) / 3600000;
@@ -306,6 +308,12 @@
     }
 
     function renderDashboard(data) {
+      if (!data.oilType) {
+        // Защита от битых данных
+        carDisplay.innerHTML = 'Ошибка данных. Пересоздайте дневник.';
+        return;
+      }
+
       const curMileage = estimateMileage(data.lastMileage, data.lastTimestamp);
       const mileageSince = curMileage - data.lastChangeMileage;
       const intervalMileage = data.intervalMileage || DEFAULT_INTERVAL_MILEAGE;
@@ -326,31 +334,25 @@
       oilBadge.textContent = type;
       oilBadge.className = 'badge ' + (type === 'Дизельное' ? 'badge-diesel' : 'badge-petrol');
 
-      // Прогресс по пробегу
       progressBarMileage.style.width = `${pctMileage}%`;
       progressBarMileage.classList.remove('warning','danger');
       if (pctMileage > 90) progressBarMileage.classList.add('danger');
       else if (pctMileage > 75) progressBarMileage.classList.add('warning');
       mileageDetail.textContent = `Пройдено: ${formatNum(mileageSince)} км из ${formatNum(intervalMileage)} · Осталось: ${formatNum(remainingMileage)} км`;
 
-      // Прогресс по дате
       progressBarDate.style.width = `${pctDate}%`;
       progressBarDate.classList.remove('warning','danger');
       if (pctDate > 90) progressBarDate.classList.add('danger');
       else if (pctDate > 75) progressBarDate.classList.add('warning');
       dateDetail.textContent = `Прошло: ${elapsedDays} дн из ${totalDays} · Осталось: ${remainingDays} дн (до ${dueDate.toLocaleDateString('ru-RU')})`;
 
-      // Алерты
       let alerts = '';
       if (pctMileage >= 100) alerts += '<div class="alert-row alert-mileage"><span class="alert-icon">⚠️</span> Пробег превышен — срочно замените масло!</div>';
       else if (pctMileage > 80) alerts += '<div class="alert-row alert-mileage"><span class="alert-icon">⚡</span> Пробег подходит к замене — запланируйте визит.</div>';
-
       if (pctDate >= 100) alerts += '<div class="alert-row alert-date"><span class="alert-icon">📅</span> Срок замены по дате истёк!</div>';
-      else if (pctDate > 80) alerts += '<div class="alert-row alert-date"><span class="alert-icon">📅</span> Срок замены приближается — осталось менее 20% времени.</div>';
+      else if (pctDate > 80) alerts += '<div class="alert-row alert-date"><span class="alert-icon">📅</span> Срок замены приближается.</div>';
 
       alertArea.innerHTML = alerts;
-
-      // Оффер
       const needsChange = pctMileage >= 80 || pctDate >= 80;
       offerBlock.style.display = needsChange ? 'block' : 'none';
     }
@@ -398,7 +400,7 @@
       const data = loadData();
       const giftCode = getGiftCodeFromURL();
 
-      if (data && data.carModel) {
+      if (data && data.carModel && data.oilType) {
         carInput.value = data.carModel;
         plateInput.value = data.plate || '';
         mileageInput.value = data.lastMileage;
@@ -432,7 +434,9 @@
       const intMileage = parseInt(intervalMileageInput.value) || DEFAULT_INTERVAL_MILEAGE;
       const intMonths = parseInt(intervalMonthsInput.value) || DEFAULT_INTERVAL_MONTHS;
 
-      if (!car || isNaN(mileage) || mileage < 0) { alert('Заполните обязательные поля: авто и пробег.'); return; }
+      if (!car) { alert('Укажите марку и модель авто.'); return; }
+      if (isNaN(mileage) || mileage < 0) { alert('Укажите корректный пробег.'); return; }
+      if (!oil) { alert('Выберите масло из списка или введите своё.'); return; }
 
       const now = Date.now();
       const giftCode = getGiftCodeFromURL();
@@ -446,7 +450,7 @@
         lastChangeDate: new Date().toISOString(),
         intervalMileage: intMileage,
         intervalMonths: intMonths,
-        history: [{ oilType: oil, mileage, timestamp: now, date: new Date().toISOString(), filters: {} }],
+        history: [{ oilType: oil, mileage: mileage, timestamp: now, date: new Date().toISOString(), filters: {} }],
         giftSent: false
       };
 
