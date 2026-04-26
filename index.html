@@ -240,8 +240,8 @@
 
   <script>
     // ═══════════════ НАСТРОЙКИ ═══════════════
-    const TELEGRAM_BOT_TOKEN = 'ВАШ_ТОКЕН_ОТ_BOTFATHER';
-    const TELEGRAM_CHAT_ID = 'ВАШ_TELEGRAM_ID';
+    const TELEGRAM_BOT_TOKEN = '8614689828:AAEegwJ7Hst_CWxeQCDaPKo1MG0HPT5JvmQ';
+    const TELEGRAM_CHAT_ID = '5979121526';
     const SHOP_URL = 'https://dalgris.ru';
     // ═══════════════════════════════════════
 
@@ -480,4 +480,61 @@
     saveChangeBtn.addEventListener('click', () => {
       const data = loadData(); if (!data) return;
       const newMileage = parseInt(changeMileageInput.value, 10);
-      if (isNaN(newM
+      if (isNaN(newMileage) || newMileage < data.lastChangeMileage) { alert('Пробег не может быть меньше последней замены.'); return; }
+      const oil = getOilFromSelect(changeOilSelect, changeCustomOilInput);
+      if (!oil) { alert('Выберите масло.'); return; }
+      const newDate = changeDateInput.value ? new Date(changeDateInput.value).toISOString() : new Date().toISOString();
+      const intMileage = parseInt(changeIntervalMileageInput.value) || DEFAULT_INTERVAL_MILEAGE;
+      const intMonths = parseInt(changeIntervalMonthsInput.value) || DEFAULT_INTERVAL_MONTHS;
+
+      const now = Date.now();
+      const filters = {
+        oil: filterOil.value.trim() || null,
+        air: filterAir.value.trim() || null,
+        cabin: filterCabin.value.trim() || null
+      };
+
+      data.lastMileage = newMileage;
+      data.lastTimestamp = now;
+      data.lastChangeMileage = newMileage;
+      data.lastChangeDate = newDate;
+      data.oilType = oil;
+      data.intervalMileage = intMileage;
+      data.intervalMonths = intMonths;
+      data.history.push({ oilType: oil, mileage: newMileage, timestamp: now, date: newDate, filters });
+
+      saveData(data);
+      renderDashboard(data);
+      switchPanel(mainPanel);
+      showToast('✅ Замена сохранена!');
+    });
+
+    backFromChangeBtn.addEventListener('click', () => switchPanel(mainPanel));
+    showHistoryBtn.addEventListener('click', () => { const d = loadData(); if (d) renderHistory(d.history); switchPanel(historyPanel); });
+    backFromHistoryBtn.addEventListener('click', () => switchPanel(mainPanel));
+
+    clearHistoryBtn.addEventListener('click', () => {
+      if (confirm('Удалить всю историю замен?')) {
+        const d = loadData();
+        if (d) {
+          d.history = [{ oilType: d.oilType, mileage: d.lastChangeMileage, timestamp: Date.now(), date: d.lastChangeDate, filters: {} }];
+          saveData(d); renderHistory(d.history);
+        }
+      }
+    });
+
+    shareGiftBtn.addEventListener('click', () => {
+      const code = generateGiftCode();
+      const url = window.location.href.split('?')[0] + '?gift=' + code;
+      if (navigator.share) {
+        navigator.share({ title: 'Масляный дневник Lubrigard', text: 'Дарю удобный учёт замен масла!', url }).catch(() => {});
+      } else {
+        prompt('Скопируйте ссылку для друга:', url);
+      }
+    });
+
+    setInterval(() => { const d = loadData(); if (d && mainPanel.classList.contains('active')) renderDashboard(d); }, 60000);
+    init();
+  </script>
+</body>
+</html>
