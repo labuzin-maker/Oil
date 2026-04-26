@@ -10,8 +10,9 @@
   <meta name="apple-mobile-web-app-title" content="Lubrigard Дневник">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#1a3a5c">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231a5fb4'/%3E%3Cstop offset='100%25' style='stop-color:%230d3b6e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='42' font-weight='bold' fill='white' font-family='Arial'%3E🛢️%3C/text%3E%3Ctext x='50' y='88' text-anchor='middle' font-size='12' fill='rgba(255,255,255,0.7)' font-family='Arial'%3EДНЕВНИК%3C/text%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%231a5fb4'/%3E%3Cstop offset='100%25' style='stop-color:%230d3b6e'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='url(%23g)'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-size='42' font-weight='bold' fill='white' font-family='Arial'%3E🛢️%3C/text%3E%3Ctext x='50' y='88' text-anchor='middle' font-size='12' fill='rgba(255,255,255,0.7)' font-family='Arial'%3EДНЕВНИК%3C/text%3E%3C/svg%3E">
+  <!-- Иконка: синий квадрат с буквой L -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231a5fb4'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='52' font-weight='bold' fill='white' font-family='Arial'%3EL%3C/text%3E%3Ctext x='50' y='86' text-anchor='middle' font-size='11' fill='rgba(255,255,255,0.7)' font-family='Arial'%3EДНЕВНИК%3C/text%3E%3C/svg%3E">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231a5fb4'/%3E%3Ctext x='50' y='62' text-anchor='middle' font-size='52' font-weight='bold' fill='white' font-family='Arial'%3EL%3C/text%3E%3Ctext x='50' y='86' text-anchor='middle' font-size='11' fill='rgba(255,255,255,0.7)' font-family='Arial'%3EДНЕВНИК%3C/text%3E%3C/svg%3E">
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -81,9 +82,7 @@
       z-index: 10; max-height: 150px; overflow-y: auto; display: none;
     }
     .suggestions-dropdown.show { display: block; }
-    .suggestion-item {
-      padding: 10px 14px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f2f2f7;
-    }
+    .suggestion-item { padding: 10px 14px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f2f2f7; }
     .suggestion-item:last-child { border-bottom: none; }
     .suggestion-item:active { background: #e8f0fe; }
     .modal-overlay {
@@ -109,17 +108,14 @@
     <!-- ПЕРВЫЙ ЗАПУСК -->
     <div id="setupPanel" class="panel active">
       <div class="app-logo">
-        <svg viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1a5fb4"/><stop offset="100%" style="stop-color:#0d3b6e"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="url(#g)"/><text x="50" y="68" text-anchor="middle" font-size="42" font-weight="bold" fill="white" font-family="Arial">🛢️</text><text x="50" y="88" text-anchor="middle" font-size="12" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
+        <svg viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#1a5fb4"/><text x="50" y="62" text-anchor="middle" font-size="52" font-weight="bold" fill="white" font-family="Arial">L</text><text x="50" y="86" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
         <h1>Масляный дневник</h1>
       </div>
       <div class="subtitle">Карта «Подари учёт» от <strong>Lubrigard</strong><br>Настройте дневник для своего авто</div>
-
       <div class="input-group"><label>🚗 Марка и модель авто</label><input type="text" id="carInput" placeholder="Toyota Camry 2020" autocomplete="off"></div>
       <div class="input-group"><label>🆔 Госномер</label><input type="text" id="plateInput" placeholder="А123БВ177" autocomplete="off" style="text-transform:uppercase;"></div>
       <div class="input-group"><label>🔢 Текущий пробег, км</label><input type="number" id="mileageInput" placeholder="120000" inputmode="numeric"></div>
-
-      <div class="input-group">
-        <label>🛢️ Залитое масло</label>
+      <div class="input-group"><label>🛢️ Залитое масло</label>
         <select id="oilSelect">
           <option value="" disabled selected>— Выберите масло —</option>
           <optgroup label="🔵 Бензиновые">
@@ -140,11 +136,9 @@
         </select>
       </div>
       <div class="input-group" id="customOilGroup" style="display:none;"><label>Укажите масло</label><input type="text" id="customOilInput" placeholder="Название и вязкость"></div>
-
       <div class="input-group"><label>🧴 Объём масла (литров)</label><input type="number" id="volumeInput" placeholder="4.5" step="0.1" min="0.5" max="50" inputmode="decimal"></div>
       <div class="input-group"><label>📅 Интервал замены по пробегу (км)</label><input type="number" id="intervalMileageInput" placeholder="10000" value="10000" inputmode="numeric"></div>
       <div class="input-group"><label>📅 Интервал замены по времени (месяцев)</label><input type="number" id="intervalMonthsInput" placeholder="12" value="12" inputmode="numeric"></div>
-
       <button class="btn" id="saveSetupBtn">✅ Создать дневник</button>
       <div class="footer-note">🔒 Данные только в вашем телефоне</div>
     </div>
@@ -152,7 +146,7 @@
     <!-- СПИСОК АВТО -->
     <div id="carListPanel" class="panel">
       <div class="app-logo">
-        <svg viewBox="0 0 100 100" width="36" height="36"><defs><linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1a5fb4"/><stop offset="100%" style="stop-color:#0d3b6e"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="url(#g2)"/><text x="50" y="68" text-anchor="middle" font-size="42" font-weight="bold" fill="white" font-family="Arial">🛢️</text><text x="50" y="88" text-anchor="middle" font-size="12" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
+        <svg viewBox="0 0 100 100" width="36" height="36"><rect width="100" height="100" rx="22" fill="#1a5fb4"/><text x="50" y="62" text-anchor="middle" font-size="52" font-weight="bold" fill="white" font-family="Arial">L</text><text x="50" y="86" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
         <h1>Мои авто</h1>
       </div>
       <div class="subtitle" id="userCodeDisplay"></div>
@@ -167,12 +161,11 @@
     <div id="mainPanel" class="panel">
       <div class="back-link" id="backToCarList">← К списку авто</div>
       <div class="app-logo">
-        <svg viewBox="0 0 100 100" width="36" height="36"><defs><linearGradient id="g3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1a5fb4"/><stop offset="100%" style="stop-color:#0d3b6e"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="url(#g3)"/><text x="50" y="68" text-anchor="middle" font-size="42" font-weight="bold" fill="white" font-family="Arial">🛢️</text><text x="50" y="88" text-anchor="middle" font-size="12" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
+        <svg viewBox="0 0 100 100" width="36" height="36"><rect width="100" height="100" rx="22" fill="#1a5fb4"/><text x="50" y="62" text-anchor="middle" font-size="52" font-weight="bold" fill="white" font-family="Arial">L</text><text x="50" y="86" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
         <h1>Дневник</h1>
       </div>
       <div class="subtitle" id="carDisplay"></div>
       <div><span class="badge badge-petrol" id="oilBadge">Бензиновое</span></div>
-
       <div class="card">
         <div class="card-title">📊 Состояние масла</div>
         <div style="font-size:11px; color:#8e8e93; margin-bottom:2px;">По пробегу</div>
@@ -183,13 +176,11 @@
         <div class="stats"><span id="dateDetail"></span></div>
         <div id="alertArea"></div>
       </div>
-
       <div class="offer-box" id="offerBlock">
         🎁 <strong>Пора менять масло!</strong><br>Скидка <strong>10%</strong> по промокоду <strong>LUBRI10</strong>.
         <div style="margin-top:6px;">👉 <a href="https://dalgris.ru" target="_blank">Купить масло на dalgris.ru</a></div>
         <div style="font-size:11px; color:#8e8e93; margin-top:4px;">Или просто запишите замену — кнопка ниже</div>
       </div>
-
       <button class="btn" id="recordChangeBtn">➕ Записать замену</button>
       <button class="btn btn-success" id="quickRepeatBtn">🔄 Повторить прошлую замену</button>
       <button class="btn btn-secondary" id="showHistoryBtn">📋 История замен</button>
@@ -201,15 +192,12 @@
     <div id="changePanel" class="panel">
       <div class="back-link" id="backFromChangeBtn">← Назад</div>
       <div class="app-logo">
-        <svg viewBox="0 0 100 100" width="32" height="32"><defs><linearGradient id="g4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1a5fb4"/><stop offset="100%" style="stop-color:#0d3b6e"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="url(#g4)"/><text x="50" y="68" text-anchor="middle" font-size="42" font-weight="bold" fill="white" font-family="Arial">🛢️</text><text x="50" y="88" text-anchor="middle" font-size="12" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
+        <svg viewBox="0 0 100 100" width="32" height="32"><rect width="100" height="100" rx="22" fill="#1a5fb4"/><text x="50" y="62" text-anchor="middle" font-size="52" font-weight="bold" fill="white" font-family="Arial">L</text><text x="50" y="86" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
         <h1>Запись замены</h1>
       </div>
-
       <div class="input-group"><label>Пробег сейчас, км</label><input type="number" id="changeMileageInput" placeholder="125000" inputmode="numeric"></div>
       <div class="input-group"><label>Дата замены</label><input type="date" id="changeDateInput"></div>
-
-      <div class="input-group">
-        <label>Новое масло</label>
+      <div class="input-group"><label>Новое масло</label>
         <select id="changeOilSelect">
           <option value="" disabled selected>— Выберите масло —</option>
           <optgroup label="🔵 Бензиновые">
@@ -228,17 +216,13 @@
           </optgroup>
         </select>
       </div>
-
       <div class="input-group"><label>🧴 Объём масла (литров)</label><input type="number" id="changeVolumeInput" placeholder="4.5" step="0.1" min="0.5" max="50" inputmode="decimal"></div>
       <div class="input-group"><label>Новый интервал по пробегу (км)</label><input type="number" id="changeIntervalMileageInput" placeholder="10000" inputmode="numeric"></div>
       <div class="input-group"><label>Новый интервал по времени (месяцев)</label><input type="number" id="changeIntervalMonthsInput" placeholder="12" inputmode="numeric"></div>
-
       <div style="border-top:1px solid #e5e5ea; margin:18px 0 14px; padding-top:4px; font-weight:600; font-size:13px; color:#1c1c1e;">🔧 Фильтры (что заменили)</div>
-
       <div class="input-group" id="filterOilGroup"><label>Масляный фильтр</label><input type="text" id="filterOil" placeholder="MANN W 610/6" autocomplete="off"><div class="suggestions-dropdown" id="suggestOil"></div></div>
       <div class="input-group" id="filterAirGroup"><label>Воздушный фильтр</label><input type="text" id="filterAir" placeholder="BOSCH F 026 400" autocomplete="off"><div class="suggestions-dropdown" id="suggestAir"></div></div>
       <div class="input-group" id="filterCabinGroup"><label>Салонный фильтр</label><input type="text" id="filterCabin" placeholder="MAHLE LAK 230" autocomplete="off"><div class="suggestions-dropdown" id="suggestCabin"></div></div>
-
       <button class="btn" id="saveChangeBtn">✅ Подтвердить замену</button>
     </div>
 
@@ -246,7 +230,7 @@
     <div id="historyPanel" class="panel">
       <div class="back-link" id="backFromHistoryBtn">← Назад</div>
       <div class="app-logo">
-        <svg viewBox="0 0 100 100" width="32" height="32"><defs><linearGradient id="g5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#1a5fb4"/><stop offset="100%" style="stop-color:#0d3b6e"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="url(#g5)"/><text x="50" y="68" text-anchor="middle" font-size="42" font-weight="bold" fill="white" font-family="Arial">🛢️</text><text x="50" y="88" text-anchor="middle" font-size="12" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
+        <svg viewBox="0 0 100 100" width="32" height="32"><rect width="100" height="100" rx="22" fill="#1a5fb4"/><text x="50" y="62" text-anchor="middle" font-size="52" font-weight="bold" fill="white" font-family="Arial">L</text><text x="50" y="86" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.7)" font-family="Arial">ДНЕВНИК</text></svg>
         <h1>История замен</h1>
       </div>
       <div id="historyList" style="margin-top:14px;"></div>
@@ -269,13 +253,16 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const STORAGE_KEY = 'oil_diary_v6';
+    // ═══════════════ НАСТРОЙКИ ═══════════════
+    const TELEGRAM_BOT_TOKEN = '8614689828:AAEegwJ7Hst_CWxeQCDaPKo1MG0HPT5JvmQ';
+    const TELEGRAM_CHAT_ID = '5979121526';
+    const GOOGLE_SHEET_URL = 'ВСТАВЬТЕ_ССЫЛКУ_СЮДА'; // ← заменить на URL из Apps Script
+    // ═══════════════════════════════════════
+
+    const STORAGE_KEY = 'oil_diary_v7';
     const FILTERS_STORAGE = 'oil_diary_filters';
     const DEFAULT_INTERVAL_MILEAGE = 10000;
     const DEFAULT_INTERVAL_MONTHS = 12;
-
-    const TELEGRAM_BOT_TOKEN = '8614689828:AAEegwJ7Hst_CWxeQCDaPKo1MG0HPT5JvmQ';
-    const TELEGRAM_CHAT_ID = '5979121526';
 
     const $ = id => document.getElementById(id);
 
@@ -308,9 +295,9 @@
     function daysBetween(a,b){return Math.round((b-a)/86400000);}
 
     function getOilFromSetupSelect(){
-      const val = oilSelect.value;
-      if (!val || val === '') return null;
-      if (val === 'custom') return customOilInput.value.trim() || null;
+      const val=oilSelect.value;
+      if(!val||val==='')return null;
+      if(val==='custom')return customOilInput.value.trim()||null;
       return val;
     }
 
@@ -331,8 +318,7 @@
       const cur=estimateMileage(c.lastMileage,c.lastTimestamp);const since=cur-c.lastChangeMileage;
       const iM=c.intervalMileage||DEFAULT_INTERVAL_MILEAGE;const remM=Math.max(iM-since,0);const pM=Math.min((since/iM)*100,100);
       const chDate=new Date(c.lastChangeDate);const iMo=c.intervalMonths||DEFAULT_INTERVAL_MONTHS;
-      const due=addMonths(chDate,iMo);const tD=daysBetween(chDate,due);const eD=daysBetween(chDate,new Date());
-      const remD=Math.max(tD-eD,0);const pD=tD>0?Math.min((eD/tD)*100,100):0;
+      const due=addMonths(chDate,iMo);const tD=daysBetween(chDate,due);const eD=daysBetween(chDate,new Date());const remD=Math.max(tD-eD,0);const pD=tD>0?Math.min((eD/tD)*100,100):0;
       carDisplay.innerHTML=`${c.carModel} · <strong>${c.plate||'Без номера'}</strong>`;
       const type=getOilType(c.oilType);oilBadge.textContent=type;oilBadge.className='badge '+(type==='Дизельное'?'badge-diesel':'badge-petrol');
       progressBarMileage.style.width=`${pM}%`;progressBarMileage.classList.remove('warning','danger');if(pM>90)progressBarMileage.classList.add('danger');else if(pM>75)progressBarMileage.classList.add('warning');
@@ -350,15 +336,17 @@
     function renderHistory(arr){
       historyList.innerHTML='';
       if(!arr||arr.length===0){historyList.innerHTML='<div style="color:#8e8e93;padding:20px;text-align:center;">История пуста</div>';return;}
-      [...arr].reverse().forEach(e=>{const d=document.createElement('div');d.className='history-item';
-        const date=new Date(e.timestamp).toLocaleDateString('ru-RU');let fHTML='';
-        if(e.filters){const t=[];if(e.filters.oil)t.push(`Масл: ${e.filters.oil}`);if(e.filters.air)t.push(`Возд: ${e.filters.air}`);if(e.filters.cabin)t.push(`Сал: ${e.filters.cabin}`);if(t.length)fHTML=`<div class="filter-tags">${t.map(x=>`<span class="filter-tag">${x}</span>`).join('')}</div>`;}
-        d.innerHTML=`<div><strong>${e.oilType}</strong><span class="volume-tag">${e.volumeL||'?'} л</span><div class="history-detail">${date} · ${formatNum(e.mileage)} км</div>${fHTML}</div><span>✅</span>`;historyList.appendChild(d);});
+      [...arr].reverse().forEach(e=>{const d=document.createElement('div');d.className='history-item';const date=new Date(e.timestamp).toLocaleDateString('ru-RU');let fHTML='';if(e.filters){const t=[];if(e.filters.oil)t.push(`Масл: ${e.filters.oil}`);if(e.filters.air)t.push(`Возд: ${e.filters.air}`);if(e.filters.cabin)t.push(`Сал: ${e.filters.cabin}`);if(t.length)fHTML=`<div class="filter-tags">${t.map(x=>`<span class="filter-tag">${x}</span>`).join('')}</div>`;}d.innerHTML=`<div><strong>${e.oilType}</strong><span class="volume-tag">${e.volumeL||'?'} л</span><div class="history-detail">${date} · ${formatNum(e.mileage)} км</div>${fHTML}</div><span>✅</span>`;historyList.appendChild(d);});
     }
 
     async function sendTelegramMsg(text){
       if(!TELEGRAM_BOT_TOKEN||TELEGRAM_BOT_TOKEN.includes('ВАШ_ТОКЕН'))return;
       try{await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text:text,parse_mode:'HTML'})});}catch(e){}
+    }
+
+    async function sendToGoogleSheet(payload){
+      if(!GOOGLE_SHEET_URL||GOOGLE_SHEET_URL.includes('ВСТАВЬТЕ'))return;
+      try{await fetch(GOOGLE_SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});}catch(e){}
     }
 
     function showSuggestions(input,dropdown,type){
@@ -384,8 +372,8 @@
 
     function init(){
       let data=loadData();const gift=new URLSearchParams(window.location.search).get('gift')||null;
-      if(!data.userId){data.userId=generateUserId();saveData(data);if(gift){sendTelegramMsg(`🎁 <b>Новый пользователь!</b>\nКод: ${gift}\nID: ${data.userId}`);showToast('🎁 Подарок активирован!');}else{sendTelegramMsg(`🆕 <b>Новый пользователь</b>\nID: ${data.userId}`);}}
-      else if(gift&&!data.giftNotified){sendTelegramMsg(`🎁 <b>Повторный вход</b>\nКод: ${gift}\nID: ${data.userId}`);data.giftNotified=true;saveData(data);}
+      if(!data.userId){data.userId=generateUserId();saveData(data);}
+      else if(gift&&!data.giftNotified){data.giftNotified=true;saveData(data);}
       if(!data.cars)data.cars={};
       if(Object.keys(data.cars).length>0){selectedCarId=Object.keys(data.cars)[0];renderCarList(data);switchPanel(carListPanel);}
       else{switchPanel(setupPanel);if(gift)showToast('🎁 Отсканирован код!');}
@@ -405,7 +393,11 @@
       const now=Date.now();const carId=generateCarId();
       const carData={carModel:car,plate,oilType:oil,lastMileage:mileage,lastTimestamp:now,lastChangeMileage:mileage,lastChangeDate:new Date().toISOString(),intervalMileage:iM,intervalMonths:iMo,volumeL:volume,history:[{oilType:oil,mileage,timestamp:now,date:new Date().toISOString(),filters:{},volumeL:volume}]};
       const data=loadData();if(!data.cars)data.cars={};data.cars[carId]=carData;saveData(data);
-      sendTelegramMsg(`🚗 <b>Авто добавлен</b>\nID польз.: ${data.userId}\nАвто: ${car}\nНомер: ${plate||'—'}\nМасло: ${oil}\nОбъём: ${volume||'—'} л\nПробег: ${formatNum(mileage)} км`);
+
+      // Уведомления
+      sendTelegramMsg(`🚗 <b>Новый авто</b>\nID: ${data.userId}\nАвто: ${car}\nНомер: ${plate||'—'}\nМасло: ${oil}\nОбъём: ${volume||'—'} л\nПробег: ${formatNum(mileage)} км`);
+      sendToGoogleSheet({userId:data.userId,car,plate:plate||'',oil,volume:volume||'',mileage:formatNum(mileage),intervalKm:iM,intervalMo:iMo});
+
       selectedCarId=carId;renderCarList(data);switchPanel(carListPanel);showToast('✅ Дневник создан!');
     });
 
