@@ -25,9 +25,7 @@
       border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
       padding: 24px 20px 30px; margin: 8px 0;
     }
-    .app-logo {
-      display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
-    }
+    .app-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
     .app-logo svg { width: 36px; height: 36px; flex-shrink: 0; }
     h1 { font-size: 22px; font-weight: 700; color: #1c1c1e; margin: 0; }
     .subtitle { color: #8e8e93; font-size: 13px; line-height: 1.4; margin-bottom: 20px; }
@@ -77,7 +75,6 @@
     .car-list-item .car-name { font-weight: 600; font-size: 15px; }
     .car-list-item .car-plate { font-size: 12px; color: #8e8e93; }
     .volume-tag { background: #e8f0fe; color: #1a5fb4; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 6px; font-weight: 600; }
-    /* Подсказки */
     .suggestions-dropdown {
       position: absolute; top: 100%; left: 0; right: 0; background: white;
       border: 1px solid #e0e0e5; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12);
@@ -89,7 +86,6 @@
     }
     .suggestion-item:last-child { border-bottom: none; }
     .suggestion-item:active { background: #e8f0fe; }
-    /* Модалка */
     .modal-overlay {
       position: fixed; top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.5); z-index: 100;
@@ -190,7 +186,8 @@
 
       <div class="offer-box" id="offerBlock">
         🎁 <strong>Пора менять масло!</strong><br>Скидка <strong>10%</strong> по промокоду <strong>LUBRI10</strong>.
-        <div style="margin-top:6px;">👉 <a href="https://dalgris.ru" target="_blank">Перейти в каталог dalgris.ru</a></div>
+        <div style="margin-top:6px;">👉 <a href="https://dalgris.ru" target="_blank">Купить масло на dalgris.ru</a></div>
+        <div style="font-size:11px; color:#8e8e93; margin-top:4px;">Или просто запишите замену — кнопка ниже</div>
       </div>
 
       <button class="btn" id="recordChangeBtn">➕ Записать замену</button>
@@ -294,7 +291,6 @@
     const confirmModal=$('confirmModal'),confirmSummary=$('confirmSummary'),modalCancel=$('modalCancel'),modalConfirm=$('modalConfirm');
 
     let selectedCarId = null;
-    let pendingSaveArgs = null;
 
     function loadData(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch(e){return{};}}
     function saveData(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
@@ -305,12 +301,18 @@
     function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2500);}
     function isDiesel(name){return/diesel|turbodiesel|hd-shield|farmtec/i.test(name||'');}
     function getOilType(name){return isDiesel(name)?'Дизельное':'Бензиновое';}
-    function getOilFromSetupSelect(){const v=oilSelect.value;if(!v||v==='')return null;return v==='custom'?(customOilInput.value.trim()||null):v;}
     function estimateMileage(last,t){return Math.round(last+(Date.now()-t)/3600000*1);}
     function generateUserId(){return'LG'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).substring(2,6).toUpperCase();}
     function generateCarId(){return'CAR'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).substring(2,4).toUpperCase();}
     function addMonths(d,m){const r=new Date(d);r.setMonth(r.getMonth()+m);return r;}
     function daysBetween(a,b){return Math.round((b-a)/86400000);}
+
+    function getOilFromSetupSelect(){
+      const val = oilSelect.value;
+      if (!val || val === '') return null;
+      if (val === 'custom') return customOilInput.value.trim() || null;
+      return val;
+    }
 
     function getSelectedCar(){const d=loadData();return(d.cars&&selectedCarId)?d.cars[selectedCarId]:null;}
     function saveSelectedCar(c){const d=loadData();if(!d.cars)d.cars={};d.cars[selectedCarId]=c;saveData(d);}
@@ -331,16 +333,12 @@
       const chDate=new Date(c.lastChangeDate);const iMo=c.intervalMonths||DEFAULT_INTERVAL_MONTHS;
       const due=addMonths(chDate,iMo);const tD=daysBetween(chDate,due);const eD=daysBetween(chDate,new Date());
       const remD=Math.max(tD-eD,0);const pD=tD>0?Math.min((eD/tD)*100,100):0;
-
       carDisplay.innerHTML=`${c.carModel} · <strong>${c.plate||'Без номера'}</strong>`;
       const type=getOilType(c.oilType);oilBadge.textContent=type;oilBadge.className='badge '+(type==='Дизельное'?'badge-diesel':'badge-petrol');
-
       progressBarMileage.style.width=`${pM}%`;progressBarMileage.classList.remove('warning','danger');if(pM>90)progressBarMileage.classList.add('danger');else if(pM>75)progressBarMileage.classList.add('warning');
       mileageDetail.textContent=`Пройдено: ${formatNum(since)} из ${formatNum(iM)} км · Осталось: ${formatNum(remM)} км`;
-
       progressBarDate.style.width=`${pD}%`;progressBarDate.classList.remove('warning','danger');if(pD>90)progressBarDate.classList.add('danger');else if(pD>75)progressBarDate.classList.add('warning');
       dateDetail.textContent=`Прошло: ${eD} из ${tD} дн · Осталось: ${remD} дн (до ${due.toLocaleDateString('ru-RU')})`;
-
       let alerts='';
       if(pM>=100)alerts+='<div class="alert-row alert-mileage"><span class="alert-icon">⚠️</span>Пробег превышен!</div>';
       else if(pM>80)alerts+='<div class="alert-row alert-mileage"><span class="alert-icon">⚡</span>Пробег подходит к замене.</div>';
@@ -363,11 +361,8 @@
       try{await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text:text,parse_mode:'HTML'})});}catch(e){}
     }
 
-    // ПОДСКАЗКИ
-    function showSuggestions(input, dropdown, type){
-      const filters=loadFilters();
-      const list=filters[type]||[];
-      const val=input.value.trim().toLowerCase();
+    function showSuggestions(input,dropdown,type){
+      const filters=loadFilters();const list=filters[type]||[];const val=input.value.trim().toLowerCase();
       const filtered=val?list.filter(x=>x.toLowerCase().includes(val)):list;
       if(filtered.length===0){dropdown.classList.remove('show');return;}
       dropdown.innerHTML=filtered.map(x=>`<div class="suggestion-item">${x}</div>`).join('');
@@ -376,20 +371,17 @@
     }
 
     function saveFilterValue(type,value){
-      if(!value||value.trim()==='')return;
-      const filters=loadFilters();
+      if(!value||value.trim()==='')return;const filters=loadFilters();
       if(!filters[type].includes(value.trim())){filters[type].unshift(value.trim());if(filters[type].length>20)filters[type].pop();}
       saveFilters(filters);
     }
 
-    // ПОДТВЕРЖДЕНИЕ
-    function showConfirmModal(summaryHTML, onConfirm){
+    function showConfirmModal(summaryHTML,onConfirm){
       confirmSummary.innerHTML=summaryHTML;confirmModal.classList.add('show');
       modalConfirm.onclick=()=>{confirmModal.classList.remove('show');onConfirm();};
       modalCancel.onclick=()=>{confirmModal.classList.remove('show');};
     }
 
-    // ИНИЦИАЛИЗАЦИЯ
     function init(){
       let data=loadData();const gift=new URLSearchParams(window.location.search).get('gift')||null;
       if(!data.userId){data.userId=generateUserId();saveData(data);if(gift){sendTelegramMsg(`🎁 <b>Новый пользователь!</b>\nКод: ${gift}\nID: ${data.userId}`);showToast('🎁 Подарок активирован!');}else{sendTelegramMsg(`🆕 <b>Новый пользователь</b>\nID: ${data.userId}`);}}
@@ -399,25 +391,27 @@
       else{switchPanel(setupPanel);if(gift)showToast('🎁 Отсканирован код!');}
     }
 
-    // СОБЫТИЯ
     oilSelect.addEventListener('change',()=>{customOilGroup.style.display=oilSelect.value==='custom'?'block':'none';});
 
     saveSetupBtn.addEventListener('click',()=>{
       const car=carInput.value.trim(),plate=plateInput.value.trim().toUpperCase(),mileage=parseInt(mileageInput.value,10);
       const oil=getOilFromSetupSelect(),volume=parseFloat(volumeInput.value)||null;
-      const iM=parseInt(intervalMileageInput.value)||DEFAULT_INTERVAL_MILEAGE,iMo=parseInt(intervalMonthsInput.value)||DEFAULT_INTERVAL_MONTHS;
-      if(!car){alert('Укажите авто.');return;}if(isNaN(mileage)||mileage<0){alert('Укажите пробег.');return;}if(!oil){alert('Выберите масло.');return;}
+      const iM=parseInt(intervalMileageInput.value)||10000,iMo=parseInt(intervalMonthsInput.value)||12;
+
+      if(!car){alert('Укажите марку и модель авто.');return;}
+      if(isNaN(mileage)||mileage<0){alert('Укажите корректный пробег.');return;}
+      if(!oil){alert('Выберите масло из списка или введите своё.');return;}
+
       const now=Date.now();const carId=generateCarId();
       const carData={carModel:car,plate,oilType:oil,lastMileage:mileage,lastTimestamp:now,lastChangeMileage:mileage,lastChangeDate:new Date().toISOString(),intervalMileage:iM,intervalMonths:iMo,volumeL:volume,history:[{oilType:oil,mileage,timestamp:now,date:new Date().toISOString(),filters:{},volumeL:volume}]};
-      const data=loadData();data.cars[carId]=carData;saveData(data);
-      sendTelegramMsg(`🚗 <b>Авто #${Object.keys(data.cars).length}</b>\nID: ${data.userId}\nАвто: ${car}\nНомер: ${plate||'—'}\nМасло: ${oil}\nОбъём: ${volume||'—'} л\nПробег: ${formatNum(mileage)} км`);
+      const data=loadData();if(!data.cars)data.cars={};data.cars[carId]=carData;saveData(data);
+      sendTelegramMsg(`🚗 <b>Авто добавлен</b>\nID польз.: ${data.userId}\nАвто: ${car}\nНомер: ${plate||'—'}\nМасло: ${oil}\nОбъём: ${volume||'—'} л\nПробег: ${formatNum(mileage)} км`);
       selectedCarId=carId;renderCarList(data);switchPanel(carListPanel);showToast('✅ Дневник создан!');
     });
 
     addCarBtn.addEventListener('click',()=>{
       carInput.value='';plateInput.value='';mileageInput.value='';oilSelect.value='';customOilInput.value='';
-      customOilGroup.style.display='none';volumeInput.value='';intervalMileageInput.value=DEFAULT_INTERVAL_MILEAGE;
-      intervalMonthsInput.value=DEFAULT_INTERVAL_MONTHS;
+      customOilGroup.style.display='none';volumeInput.value='';intervalMileageInput.value='10000';intervalMonthsInput.value='12';
       document.querySelector('#oilSelect option[value="custom"]').style.display='none';
       switchPanel(setupPanel);
     });
@@ -437,8 +431,7 @@
       const c=getSelectedCar();if(!c)return;
       changeMileageInput.value='';changeDateInput.value=new Date().toISOString().split('T')[0];
       changeOilSelect.value='';changeVolumeInput.value=c.volumeL||'';
-      changeIntervalMileageInput.value=c.intervalMileage||DEFAULT_INTERVAL_MILEAGE;
-      changeIntervalMonthsInput.value=c.intervalMonths||DEFAULT_INTERVAL_MONTHS;
+      changeIntervalMileageInput.value=c.intervalMileage||10000;changeIntervalMonthsInput.value=c.intervalMonths||12;
       filterOil.value='';filterAir.value='';filterCabin.value='';
       suggestOil.classList.remove('show');suggestAir.classList.remove('show');suggestCabin.classList.remove('show');
       switchPanel(changePanel);
@@ -454,8 +447,7 @@
         changeVolumeInput.value=last.volumeL||c.volumeL||'';
         filterOil.value=(last.filters&&last.filters.oil)||'';filterAir.value=(last.filters&&last.filters.air)||'';filterCabin.value=(last.filters&&last.filters.cabin)||'';
       }else{changeOilSelect.value='';changeVolumeInput.value=c.volumeL||'';filterOil.value='';filterAir.value='';filterCabin.value='';}
-      changeIntervalMileageInput.value=c.intervalMileage||DEFAULT_INTERVAL_MILEAGE;
-      changeIntervalMonthsInput.value=c.intervalMonths||DEFAULT_INTERVAL_MONTHS;
+      changeIntervalMileageInput.value=c.intervalMileage||10000;changeIntervalMonthsInput.value=c.intervalMonths||12;
       suggestOil.classList.remove('show');suggestAir.classList.remove('show');suggestCabin.classList.remove('show');
       switchPanel(changePanel);showToast('🔄 Данные прошлой замены подставлены');
     });
@@ -466,44 +458,34 @@
       if(isNaN(newMileage)||newMileage<c.lastChangeMileage){alert('Пробег не может быть меньше последней замены.');return;}
       const oil=changeOilSelect.value;if(!oil){alert('Выберите масло Lubrigard.');return;}
       const newDate=changeDateInput.value?new Date(changeDateInput.value).toISOString():new Date().toISOString();
-      const iM=parseInt(changeIntervalMileageInput.value)||DEFAULT_INTERVAL_MILEAGE,iMo=parseInt(changeIntervalMonthsInput.value)||DEFAULT_INTERVAL_MONTHS;
+      const iM=parseInt(changeIntervalMileageInput.value)||10000,iMo=parseInt(changeIntervalMonthsInput.value)||12;
       const volume=parseFloat(changeVolumeInput.value)||null;
       const fOil=filterOil.value.trim()||null,fAir=filterAir.value.trim()||null,fCabin=filterCabin.value.trim()||null;
-
       const summary=`<strong>Авто:</strong> ${c.carModel} ${c.plate||''}<br><strong>Пробег:</strong> ${formatNum(newMileage)} км<br><strong>Дата:</strong> ${new Date(newDate).toLocaleDateString('ru-RU')}<br><strong>Масло:</strong> ${oil}${volume?` · ${volume} л`:''}<br><strong>Фильтры:</strong><br>· Масляный: ${fOil||'—'}<br>· Воздушный: ${fAir||'—'}<br>· Салонный: ${fCabin||'—'}`;
-
       showConfirmModal(summary,()=>{
-        const now=Date.now();
-        c.lastMileage=newMileage;c.lastTimestamp=now;c.lastChangeMileage=newMileage;
+        const now=Date.now();c.lastMileage=newMileage;c.lastTimestamp=now;c.lastChangeMileage=newMileage;
         c.lastChangeDate=newDate;c.oilType=oil;c.volumeL=volume;c.intervalMileage=iM;c.intervalMonths=iMo;
         c.history.push({oilType:oil,mileage:newMileage,timestamp:now,date:newDate,filters:{oil:fOil,air:fAir,cabin:fCabin},volumeL:volume});
-        saveSelectedCar(c);
-        if(fOil)saveFilterValue('oil',fOil);if(fAir)saveFilterValue('air',fAir);if(fCabin)saveFilterValue('cabin',fCabin);
+        saveSelectedCar(c);if(fOil)saveFilterValue('oil',fOil);if(fAir)saveFilterValue('air',fAir);if(fCabin)saveFilterValue('cabin',fCabin);
         renderDashboard();switchPanel(mainPanel);showToast('✅ Замена сохранена!');
       });
     });
 
     backFromChangeBtn.addEventListener('click',()=>switchPanel(mainPanel));
 
-    // Подсказки при вводе
     filterOil.addEventListener('focus',()=>showSuggestions(filterOil,suggestOil,'oil'));
     filterOil.addEventListener('input',()=>showSuggestions(filterOil,suggestOil,'oil'));
     filterAir.addEventListener('focus',()=>showSuggestions(filterAir,suggestAir,'air'));
     filterAir.addEventListener('input',()=>showSuggestions(filterAir,suggestAir,'air'));
     filterCabin.addEventListener('focus',()=>showSuggestions(filterCabin,suggestCabin,'cabin'));
     filterCabin.addEventListener('input',()=>showSuggestions(filterCabin,suggestCabin,'cabin'));
-
     document.addEventListener('click',(e)=>{if(!e.target.closest('#filterOilGroup'))suggestOil.classList.remove('show');if(!e.target.closest('#filterAirGroup'))suggestAir.classList.remove('show');if(!e.target.closest('#filterCabinGroup'))suggestCabin.classList.remove('show');});
 
     showHistoryBtn.addEventListener('click',()=>{const c=getSelectedCar();if(c)renderHistory(c.history);switchPanel(historyPanel);});
     backFromHistoryBtn.addEventListener('click',()=>switchPanel(mainPanel));
-    clearHistoryBtn.addEventListener('click',()=>{if(!confirm('Очистить историю?'))return;const c=getSelectedCar();c.history=[{oilType:c.oilType,mileage:c.lastChangeMileage,timestamp:Date.now(),date:c.lastChangeDate,filters:{},volumeL:c.volumeL}];saveSelectedCar(c);renderHistory(c.history);});
+    clearHistoryBtn.addEventListener('click',()=>{if(!confirm('Очистить историю?'))return;const c=getSelectedCar();if(!c)return;c.history=[{oilType:c.oilType,mileage:c.lastChangeMileage,timestamp:Date.now(),date:c.lastChangeDate,filters:{},volumeL:c.volumeL}];saveSelectedCar(c);renderHistory(c.history);});
 
-    shareGiftBtn2.addEventListener('click',()=>{
-      const data=loadData();const url=window.location.href.split('?')[0]+'?gift='+(data.userId||'friend');
-      if(navigator.share){navigator.share({title:'Масляный дневник Lubrigard',text:'Дарю учёт замен масла!',url}).catch(()=>{});}
-      else{prompt('Скопируйте ссылку:',url);}
-    });
+    shareGiftBtn2.addEventListener('click',()=>{const data=loadData();const url=window.location.href.split('?')[0]+'?gift='+(data.userId||'friend');if(navigator.share){navigator.share({title:'Масляный дневник Lubrigard',text:'Дарю учёт замен масла!',url}).catch(()=>{});}else{prompt('Скопируйте ссылку:',url);}});
 
     setInterval(()=>{if(mainPanel.classList.contains('active'))renderDashboard();},60000);
     init();
