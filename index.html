@@ -257,7 +257,7 @@
   <script>
     const TELEGRAM_BOT_TOKEN = '8614689828:AAEegwJ7Hst_CWxeQCDaPKo1MG0HPT5JvmQ';
     const TELEGRAM_CHAT_ID = '5979121526';
-    const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbwvKMzEZaZoabJo7ABrbCu67j5nP8Iu4lKwONhqe2R27BGNkjWCVfJnU5X4idauVR4MzA/exec';
+    const GOOGLE_SHEET_URL = 'https://corsproxy.io/?' + encodeURIComponent('https://script.google.com/macros/s/AKfycbwvKMzEZaZoabJo7ABrbCu67j5nP8Iu4lKwONhqe2R27BGNkjWCVfJnU5X4idauVR4MzA/exec');
     const STORAGE_KEY = 'oil_diary_final';
     const FILTERS_STORAGE = 'oil_diary_filters';
     const DEFAULT_INTERVAL_MILEAGE = 10000;
@@ -335,11 +335,12 @@
 
     async function sendToGoogleSheet(payload){
       try{
-        // Используем XMLHttpRequest вместо fetch для обхода CORS
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', GOOGLE_SHEET_URL, true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(payload));
+        await fetch(GOOGLE_SHEET_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        console.log('Sheet: OK');
       }catch(e){
         console.log('Sheet error:', e);
       }
