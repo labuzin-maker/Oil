@@ -16,16 +16,8 @@
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #e8ecf1; min-height: 100vh; padding: 16px;
-      display: flex; justify-content: center; align-items: flex-start;
-    }
-    .app {
-      max-width: 440px; width: 100%; background: #ffffff;
-      border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      padding: 24px 20px 30px; margin: 8px 0;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #e8ecf1; min-height: 100vh; padding: 16px; display: flex; justify-content: center; align-items: flex-start; }
+    .app { max-width: 440px; width: 100%; background: #ffffff; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 24px 20px 30px; margin: 8px 0; }
     .app-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
     .app-logo svg { width: 36px; height: 36px; flex-shrink: 0; }
     h1 { font-size: 22px; font-weight: 700; color: #1c1c1e; margin: 0; }
@@ -88,6 +80,9 @@
     .modal-actions .btn { flex: 1; }
     .divider-text { text-align: center; color: #a1a1a6; font-size: 11px; margin: 16px 0 12px; text-transform: uppercase; letter-spacing: 1px; }
   </style>
+
+  <!-- Подключаем внешний каталог масел -->
+  <script src="oils.js"></script>
 </head>
 <body>
   <div class="app" id="appRoot">
@@ -103,50 +98,24 @@
       <div class="input-group"><label>👤 Имя <span class="label-optional">(необязательно)</span></label><input type="text" id="firstNameInput" placeholder="Александр" autocomplete="given-name"></div>
       <div class="input-group"><label>👤 Фамилия <span class="label-optional">(необязательно)</span></label><input type="text" id="lastNameInput" placeholder="Иванов" autocomplete="family-name"></div>
       <div class="input-group"><label>📱 Телефон <span class="label-optional">(необязательно)</span></label><input type="tel" id="phoneInput" placeholder="+7 900 123-45-67" autocomplete="tel"></div>
-
       <div class="divider-text">Данные автомобиля</div>
-
       <div class="input-group"><label>🚗 Марка и модель авто</label><input type="text" id="carInput" placeholder="Toyota Camry 2020" autocomplete="off"></div>
       <div class="input-group"><label>🆔 Госномер</label><input type="text" id="plateInput" placeholder="А123БВ177" autocomplete="off" style="text-transform:uppercase;"></div>
       <div class="input-group"><label>🔢 Текущий пробег, км</label><input type="number" id="mileageInput" placeholder="120000" inputmode="numeric"></div>
 
-      <div class="input-group">
-        <label>🛢️ Залитое масло</label>
-        <select id="oilSelect">
-          <option value="" disabled selected>— Выберите масло —</option>
-          <optgroup label="🔵 Бензиновые">
-            <option value="Lubrigard Supreme Synthetic 0W-20">Supreme Synthetic 0W-20</option>
-            <option value="Lubrigard Supreme Synthetic 0W-30">Supreme Synthetic 0W-30</option>
-            <option value="Lubrigard Supreme Synthetic 5W-30">Supreme Synthetic 5W-30</option>
-            <option value="Lubrigard Supreme Synthetic 5W-40">Supreme Synthetic 5W-40</option>
-            <option value="Lubrigard UltraTec 5W-30">UltraTec 5W-30</option>
-            <option value="Lubrigard Premium 10W-40">Premium 10W-40</option>
-          </optgroup>
-          <optgroup label="🟤 Дизельные">
-            <option value="Lubrigard DieselMax 5W-30">DieselMax 5W-30</option>
-            <option value="Lubrigard DieselMax 5W-40">DieselMax 5W-40</option>
-            <option value="Lubrigard TurboDiesel 10W-40">TurboDiesel 10W-40</option>
-            <option value="Lubrigard HD-Shield 15W-40">HD-Shield 15W-40</option>
-          </optgroup>
-          <option value="custom">Другое масло (ввести вручную)</option>
-        </select>
-      </div>
+      <div class="input-group"><label>🛢️ Залитое масло</label><select id="oilSelect"></select></div>
       <div class="input-group" id="customOilGroup" style="display:none;"><label>Укажите масло</label><input type="text" id="customOilInput" placeholder="Название и вязкость"></div>
 
       <div class="input-group"><label>🧴 Объём масла (литров)</label><input type="number" id="volumeInput" placeholder="4.5" step="0.1" min="0.5" max="50" inputmode="decimal"></div>
       <div class="input-group"><label>📅 Интервал замены по пробегу (км)</label><input type="number" id="intervalMileageInput" placeholder="10000" value="10000" inputmode="numeric"></div>
       <div class="input-group"><label>📅 Интервал замены по времени (месяцев)</label><input type="number" id="intervalMonthsInput" placeholder="12" value="12" inputmode="numeric"></div>
-
       <button class="btn" id="saveSetupBtn">✅ Создать дневник</button>
       <div class="footer-note">🔒 Данные только в вашем телефоне</div>
     </div>
 
     <!-- СПИСОК АВТО -->
     <div id="carListPanel" class="panel">
-      <div class="app-logo">
-        <svg viewBox="0 0 100 100" width="36" height="36"><defs><linearGradient id="o2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o2)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg>
-        <h1>Мои авто</h1>
-      </div>
+      <div class="app-logo"><svg viewBox="0 0 100 100" width="36" height="36"><defs><linearGradient id="o2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o2)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg><h1>Мои авто</h1></div>
       <div class="subtitle" id="userCodeDisplay"></div>
       <div id="carListContainer"></div>
       <button class="btn" id="addCarBtn">➕ Добавить автомобиль</button>
@@ -158,10 +127,7 @@
     <!-- ГЛАВНЫЙ ЭКРАН -->
     <div id="mainPanel" class="panel">
       <div class="back-link" id="backToCarList">← К списку авто</div>
-      <div class="app-logo">
-        <svg viewBox="0 0 100 100" width="36" height="36"><defs><linearGradient id="o3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o3)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg>
-        <h1>Дневник</h1>
-      </div>
+      <div class="app-logo"><svg viewBox="0 0 100 100" width="36" height="36"><defs><linearGradient id="o3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o3)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg><h1>Дневник</h1></div>
       <div class="subtitle" id="carDisplay"></div>
       <div><span class="badge badge-petrol" id="oilBadge">Бензиновое</span></div>
       <div class="card">
@@ -189,31 +155,10 @@
     <!-- ЗАПИСЬ ЗАМЕНЫ -->
     <div id="changePanel" class="panel">
       <div class="back-link" id="backFromChangeBtn">← Назад</div>
-      <div class="app-logo">
-        <svg viewBox="0 0 100 100" width="32" height="32"><defs><linearGradient id="o4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o4)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg>
-        <h1>Запись замены</h1>
-      </div>
+      <div class="app-logo"><svg viewBox="0 0 100 100" width="32" height="32"><defs><linearGradient id="o4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o4)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg><h1>Запись замены</h1></div>
       <div class="input-group"><label>Пробег сейчас, км</label><input type="number" id="changeMileageInput" placeholder="125000" inputmode="numeric"></div>
       <div class="input-group"><label>Дата замены</label><input type="date" id="changeDateInput"></div>
-      <div class="input-group"><label>Новое масло</label>
-        <select id="changeOilSelect">
-          <option value="" disabled selected>— Выберите масло —</option>
-          <optgroup label="🔵 Бензиновые">
-            <option value="Lubrigard Supreme Synthetic 0W-20">Supreme Synthetic 0W-20</option>
-            <option value="Lubrigard Supreme Synthetic 0W-30">Supreme Synthetic 0W-30</option>
-            <option value="Lubrigard Supreme Synthetic 5W-30">Supreme Synthetic 5W-30</option>
-            <option value="Lubrigard Supreme Synthetic 5W-40">Supreme Synthetic 5W-40</option>
-            <option value="Lubrigard UltraTec 5W-30">UltraTec 5W-30</option>
-            <option value="Lubrigard Premium 10W-40">Premium 10W-40</option>
-          </optgroup>
-          <optgroup label="🟤 Дизельные">
-            <option value="Lubrigard DieselMax 5W-30">DieselMax 5W-30</option>
-            <option value="Lubrigard DieselMax 5W-40">DieselMax 5W-40</option>
-            <option value="Lubrigard TurboDiesel 10W-40">TurboDiesel 10W-40</option>
-            <option value="Lubrigard HD-Shield 15W-40">HD-Shield 15W-40</option>
-          </optgroup>
-        </select>
-      </div>
+      <div class="input-group"><label>Новое масло</label><select id="changeOilSelect"></select></div>
       <div class="input-group"><label>🧴 Объём масла (литров)</label><input type="number" id="changeVolumeInput" placeholder="4.5" step="0.1" min="0.5" max="50" inputmode="decimal"></div>
       <div class="input-group"><label>Новый интервал по пробегу (км)</label><input type="number" id="changeIntervalMileageInput" placeholder="10000" inputmode="numeric"></div>
       <div class="input-group"><label>Новый интервал по времени (месяцев)</label><input type="number" id="changeIntervalMonthsInput" placeholder="12" inputmode="numeric"></div>
@@ -227,15 +172,12 @@
     <!-- ИСТОРИЯ -->
     <div id="historyPanel" class="panel">
       <div class="back-link" id="backFromHistoryBtn">← Назад</div>
-      <div class="app-logo">
-        <svg viewBox="0 0 100 100" width="32" height="32"><defs><linearGradient id="o5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o5)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg>
-        <h1>История замен</h1>
-      </div>
+      <div class="app-logo"><svg viewBox="0 0 100 100" width="32" height="32"><defs><linearGradient id="o5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o5)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg><h1>История замен</h1></div>
       <div id="historyList" style="margin-top:14px;"></div>
       <button class="btn btn-secondary" id="clearHistoryBtn" style="margin-top:18px;">🗑 Очистить историю</button>
     </div>
 
-    <!-- МОДАЛКА ПОДТВЕРЖДЕНИЯ -->
+    <!-- МОДАЛКА -->
     <div class="modal-overlay" id="confirmModal">
       <div class="modal-box">
         <h2>📋 Проверьте данные</h2>
@@ -251,13 +193,11 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // ═════════ НАСТРОЙКИ ═════════
     const TELEGRAM_BOT_TOKEN = '8614689828:AAEegwJ7Hst_CWxeQCDaPKo1MG0HPT5JvmQ';
     const TELEGRAM_CHAT_ID = '5979121526';
     const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxkqyJTzjiwYbPIVAeailTCZgmqWIaa9kL6Nii8OClY_ALXWL8bwMzDq5stnpYvmfsCFw/exec';
-    // ═════════════════════════════
 
-    const STORAGE_KEY = 'oil_diary_v8';
+    const STORAGE_KEY = 'oil_diary_v9';
     const FILTERS_STORAGE = 'oil_diary_filters';
     const DEFAULT_INTERVAL_MILEAGE = 10000;
     const DEFAULT_INTERVAL_MONTHS = 12;
@@ -283,7 +223,7 @@
     function switchPanel(p){[setupPanel,carListPanel,mainPanel,changePanel,historyPanel].forEach(x=>x.classList.remove('active'));p.classList.add('active');}
     function formatNum(n){return(n||0).toString().replace(/\B(?=(\d{3})+(?!\d))/g,' ');}
     function showToast(msg){toast.textContent=msg;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2500);}
-    function isDiesel(name){return/diesel|turbodiesel|hd-shield|farmtec/i.test(name||'');}
+    function isDiesel(name){return/diesel|fleetmax/i.test(name||'');}
     function getOilType(name){return isDiesel(name)?'Дизельное':'Бензиновое';}
     function estimateMileage(last,t){return Math.round(last+(Date.now()-t)/3600000*1);}
     function generateUserId(){return'LG'+Date.now().toString(36).toUpperCase()+Math.random().toString(36).substring(2,6).toUpperCase();}
@@ -329,19 +269,11 @@
     }
 
     async function sendTelegramMsg(text){
-      if(!TELEGRAM_BOT_TOKEN||TELEGRAM_BOT_TOKEN.includes('ВАШ_ТОКЕН'))return;
       try{await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:TELEGRAM_CHAT_ID,text:text,parse_mode:'HTML'})});}catch(e){}
     }
 
     async function sendToGoogleSheet(payload){
-      if(!GOOGLE_SHEET_URL||GOOGLE_SHEET_URL.includes('ВСТАВЬТЕ'))return;
-      try{
-        await fetch(GOOGLE_SHEET_URL,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(payload)
-        });
-      }catch(e){}
+      try{await fetch(GOOGLE_SHEET_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(e){}
     }
 
     function showSuggestions(input,dropdown,type){
@@ -370,6 +302,11 @@
       if(!data.userId){data.userId=generateUserId();saveData(data);}
       else if(gift&&!data.giftNotified){data.giftNotified=true;saveData(data);}
       if(!data.cars)data.cars={};
+      // Заполняем селекты из внешнего файла
+      if(typeof fillOilSelect === 'function'){
+        fillOilSelect(oilSelect, true);
+        fillOilSelect(changeOilSelect, false);
+      }
       if(Object.keys(data.cars).length>0){selectedCarId=Object.keys(data.cars)[0];renderCarList(data);switchPanel(carListPanel);}
       else{switchPanel(setupPanel);if(gift)showToast('🎁 Отсканирован код!');}
     }
@@ -377,49 +314,20 @@
     oilSelect.addEventListener('change',()=>{customOilGroup.style.display=oilSelect.value==='custom'?'block':'none';});
 
     saveSetupBtn.addEventListener('click',()=>{
-      const firstName=firstNameInput.value.trim();
-      const lastName=lastNameInput.value.trim();
-      const phone=phoneInput.value.trim();
-      const car=carInput.value.trim();
-      const plate=plateInput.value.trim().toUpperCase();
-      const mileage=parseInt(mileageInput.value,10);
-      const oil=getOilFromSetupSelect();
-      const volume=parseFloat(volumeInput.value)||null;
-      const iM=parseInt(intervalMileageInput.value)||10000;
-      const iMo=parseInt(intervalMonthsInput.value)||12;
-
+      const firstName=firstNameInput.value.trim(),lastName=lastNameInput.value.trim(),phone=phoneInput.value.trim();
+      const car=carInput.value.trim(),plate=plateInput.value.trim().toUpperCase(),mileage=parseInt(mileageInput.value,10);
+      const oil=getOilFromSetupSelect(),volume=parseFloat(volumeInput.value)||null;
+      const iM=parseInt(intervalMileageInput.value)||10000,iMo=parseInt(intervalMonthsInput.value)||12;
       if(!car){alert('Укажите марку и модель авто.');return;}
       if(isNaN(mileage)||mileage<0){alert('Укажите корректный пробег.');return;}
       if(!oil){alert('Выберите масло из списка или введите своё.');return;}
-
       const now=Date.now();const carId=generateCarId();
       const carData={carModel:car,plate,oilType:oil,lastMileage:mileage,lastTimestamp:now,lastChangeMileage:mileage,lastChangeDate:new Date().toISOString(),intervalMileage:iM,intervalMonths:iMo,volumeL:volume,history:[{oilType:oil,mileage,timestamp:now,date:new Date().toISOString(),filters:{},volumeL:volume}]};
-      const data=loadData();
-      if(!data.cars)data.cars={};
-      data.firstName=firstName||data.firstName||'';
-      data.lastName=lastName||data.lastName||'';
-      data.phone=phone||data.phone||'';
-      data.cars[carId]=carData;
-      saveData(data);
-
-      sendTelegramMsg(`🚗 <b>Новый дневник создан</b>\n👤 ${firstName||'—'} ${lastName||'—'}\n📱 ${phone||'—'}\nID: ${data.userId}\nАвто: ${car}\nНомер: ${plate||'—'}\nМасло: ${oil}\nОбъём: ${volume||'—'} л\nПробег: ${formatNum(mileage)} км`);
-      sendToGoogleSheet({
-        userId:data.userId,
-        firstName:firstName||'',
-        lastName:lastName||'',
-        phone:phone||'',
-        car:car,
-        plate:plate||'',
-        oil:oil,
-        volume:volume||'',
-        mileage:formatNum(mileage),
-        intervalKm:iM,
-        intervalMo:iMo,
-        filterOil:'',
-        filterAir:'',
-        filterCabin:''
-      });
-
+      const data=loadData();if(!data.cars)data.cars={};
+      data.firstName=firstName||data.firstName||'';data.lastName=lastName||data.lastName||'';data.phone=phone||data.phone||'';
+      data.cars[carId]=carData;saveData(data);
+      sendTelegramMsg(`🚗 <b>Новый дневник</b>\n👤 ${firstName||'—'} ${lastName||'—'}\n📱 ${phone||'—'}\nID: ${data.userId}\nАвто: ${car}\nНомер: ${plate||'—'}\nМасло: ${oil}\nОбъём: ${volume||'—'} л\nПробег: ${formatNum(mileage)} км`);
+      sendToGoogleSheet({userId:data.userId,firstName:firstName||'',lastName:lastName||'',phone:phone||'',car,plate:plate||'',oil,volume:volume||'',mileage:formatNum(mileage),intervalKm:iM,intervalMo:iMo,filterOil:'',filterAir:'',filterCabin:''});
       selectedCarId=carId;renderCarList(data);switchPanel(carListPanel);showToast('✅ Дневник создан!');
     });
 
