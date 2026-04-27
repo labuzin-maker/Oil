@@ -80,9 +80,6 @@
     .modal-actions .btn { flex: 1; }
     .divider-text { text-align: center; color: #a1a1a6; font-size: 11px; margin: 16px 0 12px; text-transform: uppercase; letter-spacing: 1px; }
   </style>
-
-  <!-- Подключаем внешний каталог масел -->
-  <script src="oils.js"></script>
 </head>
 <body>
   <div class="app" id="appRoot">
@@ -103,7 +100,40 @@
       <div class="input-group"><label>🆔 Госномер</label><input type="text" id="plateInput" placeholder="А123БВ177" autocomplete="off" style="text-transform:uppercase;"></div>
       <div class="input-group"><label>🔢 Текущий пробег, км</label><input type="number" id="mileageInput" placeholder="120000" inputmode="numeric"></div>
 
-      <div class="input-group"><label>🛢️ Залитое масло</label><select id="oilSelect"></select></div>
+      <div class="input-group">
+        <label>🛢️ Залитое масло</label>
+        <select id="oilSelect">
+          <option value="" disabled selected>— Выберите масло —</option>
+          <optgroup label="🔵 Бензиновые / Универсальные">
+            <option value="Lubrigard Supreme Synthetic Pro 0W-20">Supreme Synthetic Pro 0W-20 (бензин)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 0W-30">Supreme Synthetic Pro 0W-30 (универсальное)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 0W-40">Supreme Synthetic Pro 0W-40 (универсальное)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 5W-20">Supreme Synthetic Pro 5W-20 (бензин)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 5W-30">Supreme Synthetic Pro 5W-30 (бензин/газ)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 5W-40">Supreme Synthetic Pro 5W-40 (универсальное)</option>
+            <option value="Lubrigard Supreme Synthetic Pro C3 0W-30">Supreme Synthetic Pro C3 0W-30</option>
+            <option value="Lubrigard Supreme Synthetic Pro C3 5W-30">Supreme Synthetic Pro C3 5W-30</option>
+            <option value="Lubrigard Supreme Synthetic Pro C5 0W-20">Supreme Synthetic Pro C5 0W-20</option>
+            <option value="Lubrigard Supreme Pro 10W-40">Supreme Pro 10W-40 (полусинтетика)</option>
+          </optgroup>
+          <optgroup label="🟤 Дизельные">
+            <option value="Lubrigard Fleetmax Pro 10W-30">Fleetmax Pro 10W-30</option>
+            <option value="Lubrigard Fleetmax Pro 10W-40">Fleetmax Pro 10W-40</option>
+            <option value="Lubrigard Fleetmax Pro 15W-40">Fleetmax Pro 15W-40</option>
+            <option value="Lubrigard Fleetmax Pro 0W-40">Fleetmax Pro 0W-40 (ПАО)</option>
+            <option value="Lubrigard Fleetmax Pro 5W-40">Fleetmax Pro 5W-40</option>
+            <option value="Lubrigard Fleetmax Pro CK 10W-30">Fleetmax Pro CK 10W-30</option>
+            <option value="Lubrigard Fleetmax Pro CK 15W-40">Fleetmax Pro CK 15W-40</option>
+            <option value="Lubrigard Fleetmax Pro E4 5W-30">Fleetmax Pro E4 5W-30</option>
+            <option value="Lubrigard Fleetmax Pro E4 10W-40">Fleetmax Pro E4 10W-40</option>
+            <option value="Lubrigard Fleetmax Pro E6 5W-30">Fleetmax Pro E6 5W-30</option>
+            <option value="Lubrigard Fleetmax Pro E6 10W-40">Fleetmax Pro E6 10W-40</option>
+            <option value="Lubrigard Fleetmax Pro HD 10W-40">Fleetmax Pro HD 10W-40</option>
+            <option value="Lubrigard Fleetmax Pro HD 15W-40">Fleetmax Pro HD 15W-40</option>
+          </optgroup>
+          <option value="custom">Другое масло (ввести вручную)</option>
+        </select>
+      </div>
       <div class="input-group" id="customOilGroup" style="display:none;"><label>Укажите масло</label><input type="text" id="customOilInput" placeholder="Название и вязкость"></div>
 
       <div class="input-group"><label>🧴 Объём масла (литров)</label><input type="number" id="volumeInput" placeholder="4.5" step="0.1" min="0.5" max="50" inputmode="decimal"></div>
@@ -158,7 +188,39 @@
       <div class="app-logo"><svg viewBox="0 0 100 100" width="32" height="32"><defs><linearGradient id="o4" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f5d442"/><stop offset="100%" style="stop-color:#c7520a"/></linearGradient></defs><rect width="100" height="100" rx="22" fill="#1a3a5c"/><path d="M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z" fill="url(#o4)"/><text x="50" y="93" text-anchor="middle" font-size="10" font-weight="bold" fill="white" font-family="Arial">ЗАМЕНА</text></svg><h1>Запись замены</h1></div>
       <div class="input-group"><label>Пробег сейчас, км</label><input type="number" id="changeMileageInput" placeholder="125000" inputmode="numeric"></div>
       <div class="input-group"><label>Дата замены</label><input type="date" id="changeDateInput"></div>
-      <div class="input-group"><label>Новое масло</label><select id="changeOilSelect"></select></div>
+      <div class="input-group">
+        <label>Новое масло</label>
+        <select id="changeOilSelect">
+          <option value="" disabled selected>— Выберите масло —</option>
+          <optgroup label="🔵 Бензиновые / Универсальные">
+            <option value="Lubrigard Supreme Synthetic Pro 0W-20">Supreme Synthetic Pro 0W-20 (бензин)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 0W-30">Supreme Synthetic Pro 0W-30 (универсальное)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 0W-40">Supreme Synthetic Pro 0W-40 (универсальное)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 5W-20">Supreme Synthetic Pro 5W-20 (бензин)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 5W-30">Supreme Synthetic Pro 5W-30 (бензин/газ)</option>
+            <option value="Lubrigard Supreme Synthetic Pro 5W-40">Supreme Synthetic Pro 5W-40 (универсальное)</option>
+            <option value="Lubrigard Supreme Synthetic Pro C3 0W-30">Supreme Synthetic Pro C3 0W-30</option>
+            <option value="Lubrigard Supreme Synthetic Pro C3 5W-30">Supreme Synthetic Pro C3 5W-30</option>
+            <option value="Lubrigard Supreme Synthetic Pro C5 0W-20">Supreme Synthetic Pro C5 0W-20</option>
+            <option value="Lubrigard Supreme Pro 10W-40">Supreme Pro 10W-40 (полусинтетика)</option>
+          </optgroup>
+          <optgroup label="🟤 Дизельные">
+            <option value="Lubrigard Fleetmax Pro 10W-30">Fleetmax Pro 10W-30</option>
+            <option value="Lubrigard Fleetmax Pro 10W-40">Fleetmax Pro 10W-40</option>
+            <option value="Lubrigard Fleetmax Pro 15W-40">Fleetmax Pro 15W-40</option>
+            <option value="Lubrigard Fleetmax Pro 0W-40">Fleetmax Pro 0W-40 (ПАО)</option>
+            <option value="Lubrigard Fleetmax Pro 5W-40">Fleetmax Pro 5W-40</option>
+            <option value="Lubrigard Fleetmax Pro CK 10W-30">Fleetmax Pro CK 10W-30</option>
+            <option value="Lubrigard Fleetmax Pro CK 15W-40">Fleetmax Pro CK 15W-40</option>
+            <option value="Lubrigard Fleetmax Pro E4 5W-30">Fleetmax Pro E4 5W-30</option>
+            <option value="Lubrigard Fleetmax Pro E4 10W-40">Fleetmax Pro E4 10W-40</option>
+            <option value="Lubrigard Fleetmax Pro E6 5W-30">Fleetmax Pro E6 5W-30</option>
+            <option value="Lubrigard Fleetmax Pro E6 10W-40">Fleetmax Pro E6 10W-40</option>
+            <option value="Lubrigard Fleetmax Pro HD 10W-40">Fleetmax Pro HD 10W-40</option>
+            <option value="Lubrigard Fleetmax Pro HD 15W-40">Fleetmax Pro HD 15W-40</option>
+          </optgroup>
+        </select>
+      </div>
       <div class="input-group"><label>🧴 Объём масла (литров)</label><input type="number" id="changeVolumeInput" placeholder="4.5" step="0.1" min="0.5" max="50" inputmode="decimal"></div>
       <div class="input-group"><label>Новый интервал по пробегу (км)</label><input type="number" id="changeIntervalMileageInput" placeholder="10000" inputmode="numeric"></div>
       <div class="input-group"><label>Новый интервал по времени (месяцев)</label><input type="number" id="changeIntervalMonthsInput" placeholder="12" inputmode="numeric"></div>
@@ -197,7 +259,7 @@
     const TELEGRAM_CHAT_ID = '5979121526';
     const GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbxkqyJTzjiwYbPIVAeailTCZgmqWIaa9kL6Nii8OClY_ALXWL8bwMzDq5stnpYvmfsCFw/exec';
 
-    const STORAGE_KEY = 'oil_diary_v9';
+    const STORAGE_KEY = 'oil_diary_final';
     const FILTERS_STORAGE = 'oil_diary_filters';
     const DEFAULT_INTERVAL_MILEAGE = 10000;
     const DEFAULT_INTERVAL_MONTHS = 12;
@@ -302,11 +364,6 @@
       if(!data.userId){data.userId=generateUserId();saveData(data);}
       else if(gift&&!data.giftNotified){data.giftNotified=true;saveData(data);}
       if(!data.cars)data.cars={};
-      // Заполняем селекты из внешнего файла
-      if(typeof fillOilSelect === 'function'){
-        fillOilSelect(oilSelect, true);
-        fillOilSelect(changeOilSelect, false);
-      }
       if(Object.keys(data.cars).length>0){selectedCarId=Object.keys(data.cars)[0];renderCarList(data);switchPanel(carListPanel);}
       else{switchPanel(setupPanel);if(gift)showToast('🎁 Отсканирован код!');}
     }
@@ -334,7 +391,6 @@
     addCarBtn.addEventListener('click',()=>{
       carInput.value='';plateInput.value='';mileageInput.value='';oilSelect.value='';customOilInput.value='';
       customOilGroup.style.display='none';volumeInput.value='';intervalMileageInput.value='10000';intervalMonthsInput.value='12';
-      document.querySelector('#oilSelect option[value="custom"]').style.display='none';
       switchPanel(setupPanel);
     });
 
@@ -344,7 +400,7 @@
       const c=getSelectedCar();if(!c)return;
       if(!confirm(`Удалить ${c.carModel} ${c.plate||''}?`))return;
       const data=loadData();delete data.cars[selectedCarId];saveData(data);selectedCarId=null;
-      if(Object.keys(data.cars).length===0){document.querySelector('#oilSelect option[value="custom"]').style.display='';switchPanel(setupPanel);}
+      if(Object.keys(data.cars).length===0){switchPanel(setupPanel);}
       else{renderCarList(data);switchPanel(carListPanel);}
       showToast('🗑 Удалён');
     });
