@@ -782,19 +782,17 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // НАСТРОЙКИ
+    // ============== НАСТРОЙКИ ==============
     var TELEGRAM_BOT_TOKEN = '8614689828:AAEegwJ7Hst_CWxeQCDaPKo1MG0HPT5JvmQ';
     var TELEGRAM_CHAT_ID = '5979121526';
     var GOOGLE_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzA8E5JImIEurB_qUhYrfubLNfwhZNKRBIiA6-lEs_ZYkg-Y7FQDZ7bVWK-CumS43pHmw/exec';
-
     var STORAGE_KEY = 'oil_diary_final';
     var FILTERS_STORAGE = 'oil_diary_filters';
     var DEFAULT_INTERVAL_MILEAGE = 10000;
     var DEFAULT_INTERVAL_MONTHS = 12;
 
-    function $(id) {
-      return document.getElementById(id);
-    }
+    // ============== DOM-ЭЛЕМЕНТЫ ==============
+    function $(id) { return document.getElementById(id); }
 
     var setupPanel = $('setupPanel');
     var carListPanel = $('carListPanel');
@@ -863,12 +861,10 @@
 
     var selectedCarId = null;
 
+    // ============== УТИЛИТЫ ==============
     function loadData() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-      } catch (e) {
-        return {};
-      }
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch (e) { return {}; }
     }
 
     function saveData(d) {
@@ -876,11 +872,8 @@
     }
 
     function loadFilters() {
-      try {
-        return JSON.parse(localStorage.getItem(FILTERS_STORAGE)) || { oil: [], air: [], cabin: [] };
-      } catch (e) {
-        return { oil: [], air: [], cabin: [] };
-      }
+      try { return JSON.parse(localStorage.getItem(FILTERS_STORAGE)) || { oil: [], air: [], cabin: [] }; }
+      catch (e) { return { oil: [], air: [], cabin: [] }; }
     }
 
     function saveFilters(d) {
@@ -939,12 +932,8 @@
 
     function getOilFromSetupSelect() {
       var v = oilSelect.value;
-      if (!v || v === '') {
-        return null;
-      }
-      if (v === 'custom') {
-        return customOilInput.value.trim() || null;
-      }
+      if (!v || v === '') { return null; }
+      if (v === 'custom') { return customOilInput.value.trim() || null; }
       return v;
     }
 
@@ -955,13 +944,50 @@
 
     function saveSelectedCar(c) {
       var d = loadData();
-      if (!d.cars) {
-        d.cars = {};
-      }
+      if (!d.cars) { d.cars = {}; }
       d.cars[selectedCarId] = c;
       saveData(d);
     }
 
+    // ============== ОТПРАВКА В TELEGRAM ==============
+    function sendTelegramMsg(text) {
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', true);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.send(JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'HTML' }));
+    }
+
+    // ============== ОТПРАВКА В GOOGLE SHEETS (через форму + iframe) ==============
+    function sendToGoogleSheet(payload) {
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = GOOGLE_SHEET_URL;
+      form.target = 'hidden_iframe';
+      form.style.display = 'none';
+
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'data';
+      input.value = JSON.stringify(payload);
+      form.appendChild(input);
+
+      var iframe = document.getElementById('hidden_iframe');
+      if (!iframe) {
+        iframe = document.createElement('iframe');
+        iframe.id = 'hidden_iframe';
+        iframe.name = 'hidden_iframe';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+      }
+
+      document.body.appendChild(form);
+      form.submit();
+      setTimeout(function () {
+        document.body.removeChild(form);
+      }, 1000);
+    }
+
+    // ============== ОТОБРАЖЕНИЕ СПИСКА АВТО ==============
     function renderCarList(data) {
       carListContainer.innerHTML = '';
       userCodeDisplay.textContent = 'Ваш ID: ' + (data.userId || 'Не задан');
@@ -979,9 +1005,7 @@
         div.className = 'car-list-item';
         div.innerHTML = '<div><div class="car-name">' + c.carModel + '</div><div class="car-plate">' + (c.plate || 'Без номера') + ' · ' + formatNum(cur) + ' км</div></div><span class="badge ' + (getOilType(c.oilType) === 'Дизельное' ? 'badge-diesel' : 'badge-petrol') + '">' + c.oilType + '</span>';
         div.addEventListener('click', (function (carId) {
-          return function () {
-            openCar(carId);
-          };
+          return function () { openCar(carId); };
         })(id));
         carListContainer.appendChild(div);
       }
@@ -993,12 +1017,10 @@
       renderDashboard();
     }
 
+    // ============== ГЛАВНЫЙ ЭКРАН ДНЕВНИКА ==============
     function renderDashboard() {
       var c = getSelectedCar();
-      if (!c) {
-        switchPanel(carListPanel);
-        return;
-      }
+      if (!c) { switchPanel(carListPanel); return; }
       var cur = estimateMileage(c.lastMileage, c.lastTimestamp);
       var since = cur - c.lastChangeMileage;
       var iM = c.intervalMileage || DEFAULT_INTERVAL_MILEAGE;
@@ -1039,6 +1061,7 @@
       offerBlock.style.display = (pM >= 80 || pD >= 80) ? 'block' : 'none';
     }
 
+    // ============== ИСТОРИЯ ЗАМЕН ==============
     function renderHistory(arr) {
       historyList.innerHTML = '';
       if (!arr || arr.length === 0) {
@@ -1073,40 +1096,20 @@
       }
     }
 
-    async function sendTelegramMsg(text) {
-      try {
-        await fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/sendMessage', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'HTML' })
-        });
-      } catch (e) {}
-    }
-
-    function sendToGoogleSheet(payload) {
-  var img = new Image();
-  img.src = GOOGLE_SHEET_URL + '?data=' + encodeURIComponent(JSON.stringify(payload));
-}
-
+    // ============== ПОДСКАЗКИ В ФИЛЬТРАХ ==============
     function showSuggestions(input, dropdown, type) {
       var filters = loadFilters();
       var list = filters[type] || [];
       var val = input.value.trim().toLowerCase();
       var filtered = val ? list.filter(function (x) { return x.toLowerCase().indexOf(val) !== -1; }) : list;
-      if (filtered.length === 0) {
-        dropdown.classList.remove('show');
-        return;
-      }
+      if (filtered.length === 0) { dropdown.classList.remove('show'); return; }
       dropdown.innerHTML = '';
       for (var i = 0; i < filtered.length; i++) {
         var item = document.createElement('div');
         item.className = 'suggestion-item';
         item.textContent = filtered[i];
         item.addEventListener('click', (function (value) {
-          return function () {
-            input.value = value;
-            dropdown.classList.remove('show');
-          };
+          return function () { input.value = value; dropdown.classList.remove('show'); };
         })(filtered[i]));
         dropdown.appendChild(item);
       }
@@ -1123,28 +1126,20 @@
       saveFilters(filters);
     }
 
+    // ============== МОДАЛЬНОЕ ОКНО ПОДТВЕРЖДЕНИЯ ==============
     function showConfirmModal(summaryHTML, onConfirm) {
       confirmSummary.innerHTML = summaryHTML;
       confirmModal.classList.add('show');
-      modalConfirm.onclick = function () {
-        confirmModal.classList.remove('show');
-        onConfirm();
-      };
-      modalCancel.onclick = function () {
-        confirmModal.classList.remove('show');
-      };
+      modalConfirm.onclick = function () { confirmModal.classList.remove('show'); onConfirm(); };
+      modalCancel.onclick = function () { confirmModal.classList.remove('show'); };
     }
 
+    // ============== ИНИЦИАЛИЗАЦИЯ ==============
     function init() {
       var data = loadData();
       var gift = new URLSearchParams(window.location.search).get('gift') || null;
-      if (!data.userId) {
-        data.userId = generateUserId();
-        saveData(data);
-      } else if (gift && !data.giftNotified) {
-        data.giftNotified = true;
-        saveData(data);
-      }
+      if (!data.userId) { data.userId = generateUserId(); saveData(data); }
+      else if (gift && !data.giftNotified) { data.giftNotified = true; saveData(data); }
       if (!data.cars) { data.cars = {}; }
       if (Object.keys(data.cars).length > 0) {
         selectedCarId = Object.keys(data.cars)[0];
@@ -1156,14 +1151,12 @@
       }
     }
 
+    // ============== СОБЫТИЯ ==============
     oilSelect.addEventListener('change', function () {
-      if (oilSelect.value === 'custom') {
-        customOilGroup.style.display = 'block';
-      } else {
-        customOilGroup.style.display = 'none';
-      }
+      customOilGroup.style.display = (oilSelect.value === 'custom') ? 'block' : 'none';
     });
 
+    // СОЗДАНИЕ ДНЕВНИКА
     saveSetupBtn.addEventListener('click', function () {
       var firstName = firstNameInput.value.trim();
       var lastName = lastNameInput.value.trim();
@@ -1183,16 +1176,10 @@
       var now = Date.now();
       var carId = generateCarId();
       var carData = {
-        carModel: car,
-        plate: plate,
-        oilType: oil,
-        lastMileage: mileage,
-        lastTimestamp: now,
-        lastChangeMileage: mileage,
-        lastChangeDate: new Date().toISOString(),
-        intervalMileage: iM,
-        intervalMonths: iMo,
-        volumeL: volume,
+        carModel: car, plate: plate, oilType: oil,
+        lastMileage: mileage, lastTimestamp: now,
+        lastChangeMileage: mileage, lastChangeDate: new Date().toISOString(),
+        intervalMileage: iM, intervalMonths: iMo, volumeL: volume,
         history: [{ oilType: oil, mileage: mileage, timestamp: now, date: new Date().toISOString(), filters: {}, volumeL: volume }]
       };
       var data = loadData();
@@ -1206,20 +1193,11 @@
       sendTelegramMsg('🚗 <b>Новый дневник</b>\n👤 ' + (firstName || '—') + ' ' + (lastName || '—') + '\n📱 ' + (phone || '—') + '\nID: ' + data.userId + '\nАвто: ' + car + '\nНомер: ' + (plate || '—') + '\nМасло: ' + oil + '\nОбъём: ' + (volume || '—') + ' л\nПробег: ' + formatNum(mileage) + ' км');
 
       sendToGoogleSheet({
-        userId: data.userId,
-        firstName: firstName || '',
-        lastName: lastName || '',
-        phone: phone || '',
-        car: car,
-        plate: plate || '',
-        oil: oil,
-        volume: volume || '',
-        mileage: formatNum(mileage),
-        intervalKm: iM,
-        intervalMo: iMo,
-        filterOil: '',
-        filterAir: '',
-        filterCabin: ''
+        userId: data.userId, firstName: firstName || '', lastName: lastName || '',
+        phone: phone || '', car: car, plate: plate || '', oil: oil,
+        volume: volume || '', mileage: formatNum(mileage),
+        intervalKm: iM, intervalMo: iMo,
+        filterOil: '', filterAir: '', filterCabin: ''
       });
 
       selectedCarId = carId;
@@ -1228,25 +1206,23 @@
       showToast('✅ Дневник создан!');
     });
 
+    // ДОБАВИТЬ АВТО
     addCarBtn.addEventListener('click', function () {
-      carInput.value = '';
-      plateInput.value = '';
-      mileageInput.value = '';
-      oilSelect.value = '';
-      customOilInput.value = '';
+      carInput.value = ''; plateInput.value = ''; mileageInput.value = '';
+      oilSelect.value = ''; customOilInput.value = '';
       customOilGroup.style.display = 'none';
-      volumeInput.value = '';
-      intervalMileageInput.value = '10000';
-      intervalMonthsInput.value = '12';
+      volumeInput.value = ''; intervalMileageInput.value = '10000'; intervalMonthsInput.value = '12';
       switchPanel(setupPanel);
     });
 
+    // НАЗАД К СПИСКУ
     backToCarList.addEventListener('click', function () {
       selectedCarId = null;
       renderCarList(loadData());
       switchPanel(carListPanel);
     });
 
+    // УДАЛИТЬ АВТО
     deleteCarBtn.addEventListener('click', function () {
       var c = getSelectedCar();
       if (!c) { return; }
@@ -1255,15 +1231,12 @@
       delete data.cars[selectedCarId];
       saveData(data);
       selectedCarId = null;
-      if (Object.keys(data.cars).length === 0) {
-        switchPanel(setupPanel);
-      } else {
-        renderCarList(data);
-        switchPanel(carListPanel);
-      }
+      if (Object.keys(data.cars).length === 0) { switchPanel(setupPanel); }
+      else { renderCarList(data); switchPanel(carListPanel); }
       showToast('🗑 Удалён');
     });
 
+    // ЗАПИСАТЬ ЗАМЕНУ
     recordChangeBtn.addEventListener('click', function () {
       var c = getSelectedCar();
       if (!c) { return; }
@@ -1273,15 +1246,12 @@
       changeVolumeInput.value = c.volumeL || '';
       changeIntervalMileageInput.value = c.intervalMileage || 10000;
       changeIntervalMonthsInput.value = c.intervalMonths || 12;
-      filterOil.value = '';
-      filterAir.value = '';
-      filterCabin.value = '';
-      suggestOil.classList.remove('show');
-      suggestAir.classList.remove('show');
-      suggestCabin.classList.remove('show');
+      filterOil.value = ''; filterAir.value = ''; filterCabin.value = '';
+      suggestOil.classList.remove('show'); suggestAir.classList.remove('show'); suggestCabin.classList.remove('show');
       switchPanel(changePanel);
     });
 
+    // ПОВТОРИТЬ ПРОШЛУЮ ЗАМЕНУ
     quickRepeatBtn.addEventListener('click', function () {
       var c = getSelectedCar();
       if (!c) { return; }
@@ -1292,11 +1262,7 @@
         var found = false;
         var options = changeOilSelect.querySelectorAll('option');
         for (var i = 0; i < options.length; i++) {
-          if (options[i].value === last.oilType) {
-            changeOilSelect.value = last.oilType;
-            found = true;
-            break;
-          }
+          if (options[i].value === last.oilType) { changeOilSelect.value = last.oilType; found = true; break; }
         }
         if (!found) { changeOilSelect.value = ''; }
         changeVolumeInput.value = last.volumeL || c.volumeL || '';
@@ -1304,21 +1270,17 @@
         filterAir.value = (last.filters && last.filters.air) || '';
         filterCabin.value = (last.filters && last.filters.cabin) || '';
       } else {
-        changeOilSelect.value = '';
-        changeVolumeInput.value = c.volumeL || '';
-        filterOil.value = '';
-        filterAir.value = '';
-        filterCabin.value = '';
+        changeOilSelect.value = ''; changeVolumeInput.value = c.volumeL || '';
+        filterOil.value = ''; filterAir.value = ''; filterCabin.value = '';
       }
       changeIntervalMileageInput.value = c.intervalMileage || 10000;
       changeIntervalMonthsInput.value = c.intervalMonths || 12;
-      suggestOil.classList.remove('show');
-      suggestAir.classList.remove('show');
-      suggestCabin.classList.remove('show');
+      suggestOil.classList.remove('show'); suggestAir.classList.remove('show'); suggestCabin.classList.remove('show');
       switchPanel(changePanel);
       showToast('🔄 Данные прошлой замены подставлены');
     });
 
+    // СОХРАНИТЬ ЗАМЕНУ
     saveChangeBtn.addEventListener('click', function () {
       var c = getSelectedCar();
       if (!c) { return; }
@@ -1334,51 +1296,38 @@
       var fAir = filterAir.value.trim() || null;
       var fCabin = filterCabin.value.trim() || null;
 
-      var summary = '<strong>Авто:</strong> ' + c.carModel + ' ' + (c.plate || '') + '<br><strong>Пробег:</strong> ' + formatNum(newMileage) + ' км<br><strong>Дата:</strong> ' + new Date(newDate).toLocaleDateString('ru-RU') + '<br><strong>Масло:</strong> ' + oil + (volume ? ' · ' + volume + ' л' : '') + '<br><strong>Фильтры:</strong><br>· Масляный: ' + (fOil || '—') + '<br>· Воздушный: ' + (fAir || '—') + '<br>· Салонный: ' + (fCabin || '—');
+      var summary = '<strong>Авто:</strong> ' + c.carModel + ' ' + (c.plate || '') +
+        '<br><strong>Пробег:</strong> ' + formatNum(newMileage) + ' км' +
+        '<br><strong>Дата:</strong> ' + new Date(newDate).toLocaleDateString('ru-RU') +
+        '<br><strong>Масло:</strong> ' + oil + (volume ? ' · ' + volume + ' л' : '') +
+        '<br><strong>Фильтры:</strong><br>· Масляный: ' + (fOil || '—') +
+        '<br>· Воздушный: ' + (fAir || '—') +
+        '<br>· Салонный: ' + (fCabin || '—');
 
       showConfirmModal(summary, function () {
         var now = Date.now();
-        c.lastMileage = newMileage;
-        c.lastTimestamp = now;
-        c.lastChangeMileage = newMileage;
-        c.lastChangeDate = newDate;
-        c.oilType = oil;
-        c.volumeL = volume;
-        c.intervalMileage = iM;
-        c.intervalMonths = iMo;
+        c.lastMileage = newMileage; c.lastTimestamp = now;
+        c.lastChangeMileage = newMileage; c.lastChangeDate = newDate;
+        c.oilType = oil; c.volumeL = volume;
+        c.intervalMileage = iM; c.intervalMonths = iMo;
         c.history.push({
-          oilType: oil,
-          mileage: newMileage,
-          timestamp: now,
-          date: newDate,
-          filters: { oil: fOil, air: fAir, cabin: fCabin },
-          volumeL: volume
+          oilType: oil, mileage: newMileage, timestamp: now, date: newDate,
+          filters: { oil: fOil, air: fAir, cabin: fCabin }, volumeL: volume
         });
-                saveSelectedCar(c);
+        saveSelectedCar(c);
         if (fOil) { saveFilterValue('oil', fOil); }
         if (fAir) { saveFilterValue('air', fAir); }
         if (fCabin) { saveFilterValue('cabin', fCabin); }
 
-        // Отправляем в Google Sheets только если указан хотя бы один фильтр
-        if (fOil || fAir || fCabin) {
-          var data = loadData();
-          sendToGoogleSheet({
-            userId: data.userId || '',
-            firstName: data.firstName || '',
-            lastName: data.lastName || '',
-            phone: data.phone || '',
-            car: c.carModel || '',
-            plate: c.plate || '',
-            oil: oil,
-            volume: volume || '',
-            mileage: formatNum(newMileage),
-            intervalKm: iM,
-            intervalMo: iMo,
-            filterOil: fOil || '',
-            filterAir: fAir || '',
-            filterCabin: fCabin || ''
-          });
-        }
+        // Отправляем в Google Sheets всегда при записи замены
+        var data = loadData();
+        sendToGoogleSheet({
+          userId: data.userId || '', firstName: data.firstName || '', lastName: data.lastName || '',
+          phone: data.phone || '', car: c.carModel || '', plate: c.plate || '',
+          oil: oil, volume: volume || '', mileage: formatNum(newMileage),
+          intervalKm: iM, intervalMo: iMo,
+          filterOil: fOil || '', filterAir: fAir || '', filterCabin: fCabin || ''
+        });
 
         renderDashboard();
         switchPanel(mainPanel);
@@ -1388,6 +1337,7 @@
 
     backFromChangeBtn.addEventListener('click', function () { switchPanel(mainPanel); });
 
+    // ПОДСКАЗКИ ФИЛЬТРОВ
     filterOil.addEventListener('focus', function () { showSuggestions(filterOil, suggestOil, 'oil'); });
     filterOil.addEventListener('input', function () { showSuggestions(filterOil, suggestOil, 'oil'); });
     filterAir.addEventListener('focus', function () { showSuggestions(filterAir, suggestAir, 'air'); });
@@ -1401,12 +1351,12 @@
       if (!e.target.closest('#filterCabinGroup')) { suggestCabin.classList.remove('show'); }
     });
 
+    // ИСТОРИЯ
     showHistoryBtn.addEventListener('click', function () {
       var c = getSelectedCar();
       if (c) { renderHistory(c.history); }
       switchPanel(historyPanel);
     });
-
     backFromHistoryBtn.addEventListener('click', function () { switchPanel(mainPanel); });
 
     clearHistoryBtn.addEventListener('click', function () {
@@ -1418,6 +1368,7 @@
       renderHistory(c.history);
     });
 
+    // ПОДАРИТЬ ДРУГУ
     shareGiftBtn2.addEventListener('click', function () {
       var data = loadData();
       var url = window.location.href.split('?')[0] + '?gift=' + (data.userId || 'friend');
@@ -1428,10 +1379,12 @@
       }
     });
 
+    // АВТООБНОВЛЕНИЕ
     setInterval(function () {
       if (mainPanel.classList.contains('active')) { renderDashboard(); }
     }, 60000);
 
+    // ЗАПУСК
     init();
   </script>
 </body>
