@@ -1354,10 +1354,32 @@
           filters: { oil: fOil, air: fAir, cabin: fCabin },
           volumeL: volume
         });
-        saveSelectedCar(c);
+                saveSelectedCar(c);
         if (fOil) { saveFilterValue('oil', fOil); }
         if (fAir) { saveFilterValue('air', fAir); }
         if (fCabin) { saveFilterValue('cabin', fCabin); }
+
+        // Отправляем в Google Sheets только если указан хотя бы один фильтр
+        if (fOil || fAir || fCabin) {
+          var data = loadData();
+          sendToGoogleSheet({
+            userId: data.userId || '',
+            firstName: data.firstName || '',
+            lastName: data.lastName || '',
+            phone: data.phone || '',
+            car: c.carModel || '',
+            plate: c.plate || '',
+            oil: oil,
+            volume: volume || '',
+            mileage: formatNum(newMileage),
+            intervalKm: iM,
+            intervalMo: iMo,
+            filterOil: fOil || '',
+            filterAir: fAir || '',
+            filterCabin: fCabin || ''
+          });
+        }
+
         renderDashboard();
         switchPanel(mainPanel);
         showToast('✅ Замена сохранена!');
