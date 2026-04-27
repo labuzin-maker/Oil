@@ -14,7 +14,7 @@ const OILS_CATALOG = {
     { value: "Lubrigard Supreme Synthetic Pro C3 0W-30", label: "Supreme Synthetic Pro C3 0W-30 (бензин/дизель)" },
     { value: "Lubrigard Supreme Synthetic Pro C3 5W-30", label: "Supreme Synthetic Pro C3 5W-30 (бензин/дизель)" },
     { value: "Lubrigard Supreme Synthetic Pro C5 0W-20", label: "Supreme Synthetic Pro C5 0W-20 (бензин/дизель)" },
-    { value: "Lubrigard Supreme Pro 10W-40", label: "Supreme Pro 10W-40 (полусинтетика, бензин/дизель)" }
+    { value: "Lubrigard Supreme Pro 10W-40", label: "Supreme Pro 10W-40 (полусинтетика, бензин/дизель)" },
     { value: "Lubrigard Supreme Pro 5W-30", label: "Supreme Pro 5W-30 (полусинтетика, бензин/дизель)" }
   ],
 
