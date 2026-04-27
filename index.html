@@ -334,7 +334,15 @@
     }
 
     async function sendToGoogleSheet(payload){
-      try{await fetch(GOOGLE_SHEET_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}catch(e){}
+      try{
+        // Используем XMLHttpRequest вместо fetch для обхода CORS
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', GOOGLE_SHEET_URL, true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(payload));
+      }catch(e){
+        console.log('Sheet error:', e);
+      }
     }
 
     function showSuggestions(input,dropdown,type){
