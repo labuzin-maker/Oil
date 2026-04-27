@@ -15,467 +15,70 @@
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='oil' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23f5d442'/%3E%3Cstop offset='100%25' style='stop-color:%23c7520a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='22' fill='%231a3a5c'/%3E%3Cpath d='M50 18 C35 40 28 52 28 62 C28 74 38 84 50 84 C62 84 72 74 72 62 C72 52 65 40 50 18Z' fill='url(%23oil)'/%3E%3Ctext x='50' y='93' text-anchor='middle' font-size='10' font-weight='bold' fill='white' font-family='Arial'%3EЗАМЕНА%3C/text%3E%3C/svg%3E">
 
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #e8ecf1;
-      min-height: 100vh;
-      padding: 16px;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .app {
-      max-width: 440px;
-      width: 100%;
-      background: #ffffff;
-      border-radius: 28px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-      padding: 24px 20px 30px;
-      margin: 8px 0;
-    }
-
-    .app-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
-    }
-
-    .app-logo svg {
-      width: 36px;
-      height: 36px;
-      flex-shrink: 0;
-    }
-
-    h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #1c1c1e;
-      margin: 0;
-    }
-
-    .subtitle {
-      color: #8e8e93;
-      font-size: 13px;
-      line-height: 1.4;
-      margin-bottom: 20px;
-    }
-
-    .panel {
-      display: none;
-    }
-
-    .panel.active {
-      display: block;
-    }
-
-    .input-group {
-      margin-bottom: 16px;
-      position: relative;
-    }
-
-    label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      color: #8e8e93;
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    .label-optional {
-      font-weight: 400;
-      text-transform: none;
-      color: #a1a1a6;
-      font-size: 10px;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 13px 14px;
-      border: 1px solid #e0e0e5;
-      border-radius: 12px;
-      font-size: 15px;
-      background: #f9f9fb;
-      outline: none;
-      transition: 0.2s;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: #1a5fb4;
-      background: #fff;
-      box-shadow: 0 0 0 3px rgba(26, 95, 180, 0.1);
-    }
-
-    .btn {
-      background: #1a5fb4;
-      color: white;
-      font-weight: 600;
-      font-size: 15px;
-      padding: 13px 18px;
-      border: none;
-      border-radius: 14px;
-      width: 100%;
-      cursor: pointer;
-      margin-top: 6px;
-      -webkit-tap-highlight-color: transparent;
-      transition: 0.15s;
-    }
-
-    .btn:active {
-      background: #144080;
-      transform: scale(0.98);
-    }
-
-    .btn-secondary {
-      background: #f2f2f7;
-      color: #1a5fb4;
-    }
-
-    .btn-outline {
-      background: white;
-      color: #1a5fb4;
-      border: 1.5px solid #1a5fb4;
-    }
-
-    .btn-danger {
-      background: #fff0f0;
-      color: #d93025;
-    }
-
-    .btn-success {
-      background: #e8f5e9;
-      color: #2e7d32;
-    }
-
-    .card {
-      background: #f8f9fb;
-      border-radius: 18px;
-      padding: 18px;
-      margin: 18px 0;
-    }
-
-    .card-title {
-      font-weight: 600;
-      font-size: 14px;
-      color: #1c1c1e;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-bottom: 6px;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-bottom: 10px;
-    }
-
-    .badge-petrol {
-      background: #e3f0ff;
-      color: #1a5fb4;
-    }
-
-    .badge-diesel {
-      background: #fff0e5;
-      color: #c7520a;
-    }
-
-    .progress-container {
-      height: 8px;
-      background: #e5e5ea;
-      border-radius: 20px;
-      margin: 10px 0 8px;
-      overflow: hidden;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: #33a854;
-      width: 0%;
-      border-radius: 20px;
-      transition: width 0.5s;
-    }
-
-    .progress-bar.warning {
-      background: #e5a000;
-    }
-
-    .progress-bar.danger {
-      background: #d93025;
-    }
-
-    .stats {
-      font-size: 12px;
-      color: #6e6e73;
-      font-weight: 500;
-    }
-
-    .offer-box {
-      background: #fefce8;
-      border: 1px solid #f5d442;
-      border-radius: 14px;
-      padding: 14px;
-      margin-top: 14px;
-      font-size: 13px;
-      line-height: 1.5;
-      display: none;
-    }
-
-    .offer-box a {
-      color: #1a5fb4;
-      font-weight: 600;
-      text-decoration: none;
-    }
-
-    .history-item {
-      background: #fff;
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 8px;
-      border: 1px solid #f0f0f5;
-      font-size: 13px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-    }
-
-    .history-detail {
-      font-size: 11px;
-      color: #8e8e93;
-      margin-top: 3px;
-    }
-
-    .back-link {
-      font-size: 14px;
-      color: #1a5fb4;
-      margin-bottom: 12px;
-      cursor: pointer;
-      font-weight: 500;
-      display: inline-block;
-    }
-
-    hr {
-      margin: 18px 0 14px;
-      border: 0.5px solid #e5e5ea;
-    }
-
-    .footer-note {
-      text-align: center;
-      font-size: 11px;
-      color: #a1a1a6;
-      margin-top: 8px;
-    }
-
-    .toast {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1c1c1e;
-      color: white;
-      padding: 12px 24px;
-      border-radius: 25px;
-      font-size: 14px;
-      z-index: 999;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
-
-    .toast.show {
-      opacity: 1;
-    }
-
-    .filter-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
-
-    .filter-tag {
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 10px;
-      background: #f0f0f5;
-      color: #6e6e73;
-    }
-
-    .alert-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      padding: 8px 12px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 500;
-    }
-
-    .alert-mileage {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .alert-date {
-      background: #f8d7da;
-      color: #721c24;
-    }
-
-    .alert-icon {
-      font-size: 16px;
-    }
-
-    .car-list-item {
-      background: #fff;
-      border-radius: 14px;
-      padding: 14px 16px;
-      margin-bottom: 8px;
-      border: 1px solid #e5e5ea;
-      cursor: pointer;
-      transition: 0.15s;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .car-list-item:active {
-      background: #f2f2f7;
-    }
-
-    .car-list-item .car-name {
-      font-weight: 600;
-      font-size: 15px;
-    }
-
-    .car-list-item .car-plate {
-      font-size: 12px;
-      color: #8e8e93;
-    }
-
-    .volume-tag {
-      background: #e8f0fe;
-      color: #1a5fb4;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 11px;
-      margin-left: 6px;
-      font-weight: 600;
-    }
-
-    .suggestions-dropdown {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: white;
-      border: 1px solid #e0e0e5;
-      border-radius: 10px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-      z-index: 10;
-      max-height: 150px;
-      overflow-y: auto;
-      display: none;
-    }
-
-    .suggestions-dropdown.show {
-      display: block;
-    }
-
-    .suggestion-item {
-      padding: 10px 14px;
-      font-size: 14px;
-      cursor: pointer;
-      border-bottom: 1px solid #f2f2f7;
-    }
-
-    .suggestion-item:last-child {
-      border-bottom: none;
-    }
-
-    .suggestion-item:active {
-      background: #e8f0fe;
-    }
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 100;
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .modal-overlay.show {
-      display: flex;
-    }
-
-    .modal-box {
-      background: white;
-      border-radius: 20px;
-      padding: 24px;
-      margin: 20px;
-      max-width: 380px;
-      width: 100%;
-      text-align: center;
-    }
-
-    .modal-box h2 {
-      font-size: 18px;
-      margin-bottom: 12px;
-    }
-
-    .modal-box .summary {
-      text-align: left;
-      font-size: 13px;
-      line-height: 1.6;
-      margin-bottom: 16px;
-      background: #f8f9fb;
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .modal-box .summary strong {
-      color: #1c1c1e;
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .modal-actions .btn {
-      flex: 1;
-    }
-
-    .divider-text {
-      text-align: center;
-      color: #a1a1a6;
-      font-size: 11px;
-      margin: 16px 0 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #e8ecf1; min-height: 100vh; padding: 16px; display: flex; justify-content: center; align-items: flex-start; }
+    .app { max-width: 440px; width: 100%; background: #ffffff; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 24px 20px 30px; margin: 8px 0; }
+    .app-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .app-logo svg { width: 36px; height: 36px; flex-shrink: 0; }
+    h1 { font-size: 22px; font-weight: 700; color: #1c1c1e; margin: 0; }
+    .subtitle { color: #8e8e93; font-size: 13px; line-height: 1.4; margin-bottom: 20px; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .input-group { margin-bottom: 16px; position: relative; }
+    label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #8e8e93; display: block; margin-bottom: 5px; }
+    .label-optional { font-weight: 400; text-transform: none; color: #a1a1a6; font-size: 10px; }
+    input, select { width: 100%; padding: 13px 14px; border: 1px solid #e0e0e5; border-radius: 12px; font-size: 15px; background: #f9f9fb; outline: none; transition: 0.2s; -webkit-appearance: none; appearance: none; }
+    input:focus, select:focus { border-color: #1a5fb4; background: #fff; box-shadow: 0 0 0 3px rgba(26,95,180,0.1); }
+    .btn { background: #1a5fb4; color: white; font-weight: 600; font-size: 15px; padding: 13px 18px; border: none; border-radius: 14px; width: 100%; cursor: pointer; margin-top: 6px; -webkit-tap-highlight-color: transparent; transition: 0.15s; }
+    .btn:active { background: #144080; transform: scale(0.98); }
+    .btn-secondary { background: #f2f2f7; color: #1a5fb4; }
+    .btn-outline { background: white; color: #1a5fb4; border: 1.5px solid #1a5fb4; }
+    .btn-danger { background: #fff0f0; color: #d93025; }
+    .btn-success { background: #e8f5e9; color: #2e7d32; }
+    .card { background: #f8f9fb; border-radius: 18px; padding: 18px; margin: 18px 0; }
+    .card-title { font-weight: 600; font-size: 14px; color: #1c1c1e; display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 10px; }
+    .badge-petrol { background: #e3f0ff; color: #1a5fb4; }
+    .badge-diesel { background: #fff0e5; color: #c7520a; }
+    .progress-container { height: 8px; background: #e5e5ea; border-radius: 20px; margin: 10px 0 8px; overflow: hidden; }
+    .progress-bar { height: 100%; background: #33a854; width: 0%; border-radius: 20px; transition: width 0.5s; }
+    .progress-bar.warning { background: #e5a000; }
+    .progress-bar.danger { background: #d93025; }
+    .stats { font-size: 12px; color: #6e6e73; font-weight: 500; }
+    .offer-box { background: #fefce8; border: 1px solid #f5d442; border-radius: 14px; padding: 14px; margin-top: 14px; font-size: 13px; line-height: 1.5; display: none; }
+    .offer-box a { color: #1a5fb4; font-weight: 600; text-decoration: none; }
+    .history-item { background: #fff; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; border: 1px solid #f0f0f5; font-size: 13px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .history-detail { font-size: 11px; color: #8e8e93; margin-top: 3px; }
+    .back-link { font-size: 14px; color: #1a5fb4; margin-bottom: 12px; cursor: pointer; font-weight: 500; display: inline-block; }
+    hr { margin: 18px 0 14px; border: 0.5px solid #e5e5ea; }
+    .footer-note { text-align: center; font-size: 11px; color: #a1a1a6; margin-top: 8px; }
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #1c1c1e; color: white; padding: 12px 24px; border-radius: 25px; font-size: 14px; z-index: 999; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    .toast.show { opacity: 1; }
+    .filter-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+    .filter-tag { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: #f0f0f5; color: #6e6e73; }
+    .alert-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 12px; border-radius: 10px; font-size: 12px; font-weight: 500; }
+    .alert-mileage { background: #fff3cd; color: #856404; }
+    .alert-date { background: #f8d7da; color: #721c24; }
+    .alert-icon { font-size: 16px; }
+    .car-list-item { background: #fff; border-radius: 14px; padding: 14px 16px; margin-bottom: 8px; border: 1px solid #e5e5ea; cursor: pointer; transition: 0.15s; display: flex; justify-content: space-between; align-items: center; }
+    .car-list-item:active { background: #f2f2f7; }
+    .car-list-item .car-name { font-weight: 600; font-size: 15px; }
+    .car-list-item .car-plate { font-size: 12px; color: #8e8e93; }
+    .volume-tag { background: #e8f0fe; color: #1a5fb4; padding: 2px 8px; border-radius: 10px; font-size: 11px; margin-left: 6px; font-weight: 600; }
+    .suggestions-dropdown { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #e0e0e5; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.12); z-index: 10; max-height: 150px; overflow-y: auto; display: none; }
+    .suggestions-dropdown.show { display: block; }
+    .suggestion-item { padding: 10px 14px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f2f2f7; }
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:active { background: #e8f0fe; }
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; display: none; justify-content: center; align-items: center; }
+    .modal-overlay.show { display: flex; }
+    .modal-box { background: white; border-radius: 20px; padding: 24px; margin: 20px; max-width: 380px; width: 100%; text-align: center; }
+    .modal-box h2 { font-size: 18px; margin-bottom: 12px; }
+    .modal-box .summary { text-align: left; font-size: 13px; line-height: 1.6; margin-bottom: 16px; background: #f8f9fb; border-radius: 12px; padding: 12px; }
+    .modal-box .summary strong { color: #1c1c1e; }
+    .modal-actions { display: flex; gap: 8px; }
+    .modal-actions .btn { flex: 1; }
+    .divider-text { text-align: center; color: #a1a1a6; font-size: 11px; margin: 16px 0 12px; text-transform: uppercase; letter-spacing: 1px; }
   </style>
 </head>
 <body>
@@ -791,7 +394,6 @@
     var DEFAULT_INTERVAL_MILEAGE = 10000;
     var DEFAULT_INTERVAL_MONTHS = 12;
 
-    // ============== DOM-ЭЛЕМЕНТЫ ==============
     function $(id) { return document.getElementById(id); }
 
     var setupPanel = $('setupPanel');
@@ -958,7 +560,7 @@
     }
 
     // ============== ОТПРАВКА В GOOGLE SHEETS (через форму + iframe) ==============
-        function sendToGoogleSheet(payload) {
+    function sendToGoogleSheet(payload) {
       var form = document.createElement('form');
       form.method = 'POST';
       form.action = GOOGLE_SHEET_URL;
@@ -1191,8 +793,10 @@
       data.cars[carId] = carData;
       saveData(data);
 
+      // Telegram
       sendTelegramMsg('🚗 <b>Новый дневник</b>\n👤 ' + (firstName || '—') + ' ' + (lastName || '—') + '\n📱 ' + (phone || '—') + '\nID: ' + data.userId + '\nАвто: ' + car + '\nНомер: ' + (plate || '—') + '\nМасло: ' + oil + '\nОбъём: ' + (volume || '—') + ' л\nПробег: ' + formatNum(mileage) + ' км');
 
+      // Google Sheets
       sendToGoogleSheet({
         userId: data.userId, firstName: firstName || '', lastName: lastName || '',
         phone: phone || '', car: car, plate: plate || '', oil: oil,
@@ -1385,7 +989,6 @@
       if (mainPanel.classList.contains('active')) { renderDashboard(); }
     }, 60000);
 
-    // ЗАПУСК
     init();
   </script>
 </body>
