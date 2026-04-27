@@ -1084,31 +1084,9 @@
     }
 
     function sendToGoogleSheet(payload) {
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = GOOGLE_SHEET_URL;
-      form.target = 'hidden_iframe';
-      form.style.display = 'none';
-
-      var input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'data';
-      input.value = JSON.stringify(payload);
-      form.appendChild(input);
-
-      var iframe = document.getElementById('hidden_iframe');
-      if (!iframe) {
-        iframe = document.createElement('iframe');
-        iframe.id = 'hidden_iframe';
-        iframe.name = 'hidden_iframe';
-        iframe.style.display = 'none';
-        document.body.appendChild(iframe);
-      }
-
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-    }
+  var img = new Image();
+  img.src = GOOGLE_SHEET_URL + '?data=' + encodeURIComponent(JSON.stringify(payload));
+}
 
     function showSuggestions(input, dropdown, type) {
       var filters = loadFilters();
