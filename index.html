@@ -958,17 +958,18 @@
     }
 
     // ============== ОТПРАВКА В GOOGLE SHEETS (через форму + iframe) ==============
-    function sendToGoogleSheet(payload) {
+        function sendToGoogleSheet(payload) {
       var form = document.createElement('form');
       form.method = 'POST';
       form.action = GOOGLE_SHEET_URL;
       form.target = 'hidden_iframe';
       form.style.display = 'none';
+      form.acceptCharset = 'UTF-8';
 
       var input = document.createElement('input');
       input.type = 'hidden';
       input.name = 'data';
-      input.value = JSON.stringify(payload);
+      input.value = encodeURIComponent(JSON.stringify(payload));
       form.appendChild(input);
 
       var iframe = document.getElementById('hidden_iframe');
