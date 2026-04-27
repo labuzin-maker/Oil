@@ -219,6 +219,7 @@
       <div class="input-group"><label>📱 Телефон</label><input type="tel" id="editPhoneInput" placeholder="+7 900 123-45-67" autocomplete="tel"></div>
       <div class="input-group"><label>🚗 Марка и модель авто</label><input type="text" id="editCarModelInput" placeholder="Toyota Camry 2020" autocomplete="off"></div>
       <div class="input-group"><label>🆔 Госномер</label><input type="text" id="editPlateInput" placeholder="А123БВ177" autocomplete="off" style="text-transform:uppercase;"></div>
+      <div class="input-group"><label>🔢 Текущий пробег, км</label><input type="number" id="editMileageInput" placeholder="120000" inputmode="numeric"></div>
       <div class="input-group"><label>🧴 Объём масла (литров)</label><input type="number" id="editVolumeInput" placeholder="4.5" step="0.1" min="0.5" max="50" inputmode="decimal"></div>
       <button class="btn" id="saveEditCarBtn">💾 Сохранить изменения</button>
     </div>
@@ -391,6 +392,7 @@
     var editPhoneInput = $('editPhoneInput');
     var editCarModelInput = $('editCarModelInput');
     var editPlateInput = $('editPlateInput');
+    var editMileageInput = $('editMileageInput');
     var editVolumeInput = $('editVolumeInput');
     var saveEditCarBtn = $('saveEditCarBtn');
     var backFromEditCarBtn = $('backFromEditCarBtn');
@@ -514,10 +516,8 @@
     function renderHistory(arr) {
       historyList.innerHTML = '';
       if (!arr || arr.length === 0) { historyList.innerHTML = '<div style="color:#8e8e93;padding:20px;text-align:center;">История пуста</div>'; return; }
-      var reversed = [];
-      for (var i = arr.length - 1; i >= 0; i--) { reversed.push(arr[i]); }
-      for (var j = 0; j < reversed.length; j++) {
-        var e = reversed[j];
+      for (var j = arr.length - 1; j >= 0; j--) {
+        var e = arr[j];
         var d = document.createElement('div');
         d.className = 'history-item';
         var date = new Date(e.timestamp).toLocaleDateString('ru-RU');
@@ -533,33 +533,41 @@
             fHTML += '</div>';
           }
         }
-        d.innerHTML = '<div><strong>' + e.oilType + '</strong><span class="volume-tag">' + (e.volumeL || '?') + ' л</span><div class="history-detail">' + date + ' · ' + formatNum(e.mileage) + ' км</div>' + fHTML + '</div><span class="edit-history-btn" data-index="' + (arr.length - 1 - j) + '">✏️</span>';
+        d.innerHTML = '<div><strong>' + e.oilType + '</strong><span class="volume-tag">' + (e.volumeL || '?') + ' л</span><div class="history-detail">' + date + ' · ' + formatNum(e.mileage) + ' км</div>' + fHTML + '</div><span class="edit-history-btn" data-index="' + j + '" style="cursor:pointer;font-size:16px;padding:4px;">✏️</span>';
         historyList.appendChild(d);
       }
+      // Обработчики редактирования
       var editBtns = historyList.querySelectorAll('.edit-history-btn');
       for (var m = 0; m < editBtns.length; m++) {
-        editBtns[m].addEventListener('click', (function (entry, originalIndex) {
-          return function () {
+        (function (index) {
+          editBtns[m].addEventListener('click', function () {
+            var entry = arr[index];
             var newOil = prompt('Масло:', entry.oilType);
-            if (!newOil) { return; }
+            if (newOil === null) { return; }
             var newMileage = prompt('Пробег, км:', entry.mileage);
-            if (!newMileage) { return; }
+            if (newMileage === null) { return; }
             var newVolume = prompt('Объём, л:', entry.volumeL || '');
             var newFilterOil = prompt('Масляный фильтр:', (entry.filters && entry.filters.oil) || '');
             var newFilterAir = prompt('Воздушный фильтр:', (entry.filters && entry.filters.air) || '');
             var newFilterCabin = prompt('Салонный фильтр:', (entry.filters && entry.filters.cabin) || '');
-            entry.oilType = newOil;
+
+            entry.oilType = newOil || entry.oilType;
             entry.mileage = parseInt(newMileage, 10) || entry.mileage;
-            entry.volumeL = parseFloat(newVolume) || null;
-            entry.filters = { oil: newFilterOil || null, air: newFilterAir || null, cabin: newFilterCabin || null };
+            entry.volumeL = parseFloat(newVolume) || entry.volumeL || null;
+            entry.filters = {
+              oil: newFilterOil || null,
+              air: newFilterAir || null,
+              cabin: newFilterCabin || null
+            };
+
             var car = getSelectedCar();
-            car.history[originalIndex] = entry;
+            car.history[index] = entry;
             saveSelectedCar(car);
             renderHistory(car.history);
             renderDashboard();
             showToast('✅ Запись обновлена!');
-          };
-        })(reversed[j], arr.length - 1 - j));
+          });
+        })(parseInt(editBtns[m].getAttribute('data-index')));
       }
     }
 
@@ -666,6 +674,7 @@
       editPhoneInput.value = data.phone || '';
       editCarModelInput.value = c.carModel || '';
       editPlateInput.value = c.plate || '';
+      editMileageInput.value = c.lastMileage || '';
       editVolumeInput.value = c.volumeL || '';
       switchPanel(editCarPanel);
     });
@@ -679,6 +688,7 @@
       data.phone = editPhoneInput.value.trim();
       c.carModel = editCarModelInput.value.trim();
       c.plate = editPlateInput.value.trim().toUpperCase();
+      c.lastMileage = parseInt(editMileageInput.value, 10) || c.lastMileage;
       c.volumeL = parseFloat(editVolumeInput.value) || null;
       saveSelectedCar(c);
       saveData(data);
